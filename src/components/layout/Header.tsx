@@ -1,19 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Linkedin, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { navItems, profile } from "@/data/profile";
+import { toneBg } from "@/lib/tone";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -23,41 +16,50 @@ export function Header() {
   }, [open]);
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-40 bg-background/90 backdrop-blur transition-[border-color] duration-300",
-        scrolled ? "border-b" : "border-b border-transparent",
-      )}
-    >
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:bg-card focus:px-3 focus:py-2">
+    <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
+      <a
+        href="#main"
+        className="ui sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:bg-marigold focus:px-3 focus:py-2 focus:text-marigold-ink"
+      >
         Skip to content
       </a>
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        <Link to="/" className="font-serif text-2xl leading-none" onClick={() => setOpen(false)}>
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-8">
+        <Link
+          to="/"
+          onClick={() => setOpen(false)}
+          className="font-display text-xl font-semibold tracking-tight"
+        >
           {profile.shortName}
         </Link>
-        <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeOptions={{ exact: item.to === "/" }}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <a
-            href={profile.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="LinkedIn (placeholder link)"
-            className="text-muted-foreground transition-colors hover:text-accent"
-          >
-            <Linkedin className="h-4 w-4" />
-          </a>
+
+        <nav aria-label="Primary" className="hidden md:block">
+          <ul className="flex items-center gap-1">
+            {navItems.map((item) => (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  className="ui group relative block px-3 py-2 text-ink-soft transition-colors hover:text-ink"
+                  activeProps={{ className: "!text-ink font-semibold", "aria-current": "page" }}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {item.label}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "absolute inset-x-3 -bottom-[13px] h-1 origin-left transition-transform duration-300",
+                          toneBg[item.tone],
+                          isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                        )}
+                      />
+                    </>
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </nav>
+
         <button
           type="button"
           className="-mr-2 p-2 md:hidden"
@@ -66,30 +68,29 @@ export function Header() {
           aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
+
       {open && (
-        <nav id="mobile-nav" aria-label="Mobile" className="border-t bg-background md:hidden">
-          <ul className="mx-auto max-w-6xl px-5 py-4">
+        <nav
+          id="mobile-nav"
+          aria-label="Mobile"
+          className="border-t border-line bg-paper md:hidden"
+        >
+          <ul className="mx-auto max-w-6xl px-4 pb-6 pt-2">
             {navItems.map((item) => (
               <li key={item.to}>
                 <Link
                   to={item.to}
-                  activeOptions={{ exact: item.to === "/" }}
                   onClick={() => setOpen(false)}
-                  className="block border-b py-4 font-serif text-3xl"
-                  activeProps={{ className: "text-accent" }}
+                  className="flex items-center gap-4 border-b border-line py-4 font-display text-3xl font-semibold"
                 >
+                  <span aria-hidden className={cn("h-6 w-1.5", toneBg[item.tone])} />
                   {item.label}
                 </Link>
               </li>
             ))}
-            <li>
-              <a href={profile.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
-                <Linkedin className="h-4 w-4" /> LinkedIn
-              </a>
-            </li>
           </ul>
         </nav>
       )}

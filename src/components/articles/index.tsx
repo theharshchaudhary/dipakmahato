@@ -1,43 +1,63 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 import type { Article } from "@/types";
 import { formatPublished } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
-export function ArticleMeta({ article }: { article: Article }) {
+export function ArticleMeta({ article, className }: { article: Article; className?: string }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-      <span className="font-medium uppercase tracking-[0.14em] text-accent">{article.category}</span>
-      <span aria-hidden>·</span>
+    <p className={cn("ui flex flex-wrap gap-x-5 gap-y-1 text-ink-soft", className)}>
+      <span className="font-semibold text-crimson">{article.category}</span>
       <span>{formatPublished(article)}</span>
-      <span aria-hidden>·</span>
       <span>{article.readingMinutes} min read</span>
-    </div>
+    </p>
   );
 }
 
-export function ArticlePreview({ article, large = false }: { article: Article; large?: boolean }) {
+/** One article as a full-width row: the title does the work, not a card. */
+export function ArticleRow({ article }: { article: Article }) {
   return (
-    <article className="group flex h-full flex-col border-t pt-6">
-      <ArticleMeta article={article} />
-      <h3 className={large ? "mt-4 text-4xl leading-tight sm:text-5xl" : "mt-4 text-2xl leading-snug sm:text-[1.7rem]"}>
+    <li className="group relative grid gap-3 border-t-2 border-ink/10 py-7 transition-colors hover:border-crimson md:grid-cols-12 md:gap-8">
+      <h3 className="display-md md:col-span-7">
         <Link
           to="/writing/$slug"
           params={{ slug: article.slug }}
-          className="transition-colors group-hover:text-accent"
+          className="after:absolute after:inset-0 group-hover:text-crimson"
         >
           {article.title}
         </Link>
       </h3>
-      <p className="mt-3 max-w-prose text-muted-foreground">{article.excerpt}</p>
-      <Link
-        to="/writing/$slug"
-        params={{ slug: article.slug }}
-        className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-medium"
-        aria-label={`Read article: ${article.title}`}
-      >
-        <span className="link-underline">Read article</span>
-        <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-1" aria-hidden />
-      </Link>
+      <div className="md:col-span-5">
+        <p className="text-ink-soft">{article.excerpt}</p>
+        <ArticleMeta article={article} className="mt-3" />
+      </div>
+    </li>
+  );
+}
+
+export function ArticleList({ articles }: { articles: Article[] }) {
+  return (
+    <ul className="border-b-2 border-ink/10">
+      {articles.map((a) => (
+        <ArticleRow key={a.slug} article={a} />
+      ))}
+    </ul>
+  );
+}
+
+export function ArticleFeature({ article }: { article: Article }) {
+  return (
+    <article className="group relative border-l-[6px] border-crimson bg-surface p-6 sm:p-10">
+      <ArticleMeta article={article} />
+      <h2 className="display-xl mt-5 max-w-4xl">
+        <Link
+          to="/writing/$slug"
+          params={{ slug: article.slug }}
+          className="after:absolute after:inset-0 group-hover:text-crimson"
+        >
+          {article.title}
+        </Link>
+      </h2>
+      <p className="mt-5 max-w-2xl text-xl text-ink-soft">{article.subtitle}</p>
     </article>
   );
 }

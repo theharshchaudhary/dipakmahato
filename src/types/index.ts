@@ -1,4 +1,5 @@
-export type ArticleCategory = "Entrepreneurship" | "Business Strategy" | "Technology" | "Founder Reflections";
+export type ArticleCategory =
+  "Entrepreneurship" | "Business Strategy" | "Technology" | "Founder Reflections";
 
 export interface ArticleSection {
   id: string;
@@ -33,9 +34,13 @@ export interface Venture {
   primary?: boolean;
 }
 
+/** Each section of the site owns one colour from the palette. */
+export type Tone = "ink" | "sign" | "crimson" | "marigold";
+
 export interface NavItem {
   label: string;
   to: "/" | "/about" | "/writing" | "/ventures" | "/contact";
+  tone: Tone;
 }
 
 export interface Profile {

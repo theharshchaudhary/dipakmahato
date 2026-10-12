@@ -18,6 +18,8 @@
     "rolldown": "1.2.1"
   },
   "dependencies": {
+    "@fontsource-variable/anek-latin": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-router": "1.170.41",
     "@tanstack/react-start": "1.168.60",

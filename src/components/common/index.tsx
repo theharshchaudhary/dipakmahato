@@ -1,39 +1,34 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ImageIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { useReveal } from "@/hooks/use-reveal";
 import { cn } from "@/lib/utils";
-import type { NavItem } from "@/types";
+import { toneBg } from "@/lib/tone";
+import type { NavItem, Tone } from "@/types";
 
 type NavTo = NavItem["to"];
 
-export function Reveal({ children, className }: { children: ReactNode; className?: string }) {
-  const ref = useReveal<HTMLDivElement>();
-  return (
-    <div ref={ref} className={cn("reveal", className)}>
-      {children}
-    </div>
-  );
+export function Container({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cn("mx-auto w-full max-w-6xl px-4 sm:px-8", className)}>{children}</div>;
 }
 
-export function Container({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)}>{children}</div>;
+/** A short painted bar marking which part of the site a block belongs to. */
+export function ToneBar({ tone, className }: { tone: Tone; className?: string }) {
+  return <span aria-hidden className={cn("block h-1.5 w-12", toneBg[tone], className)} />;
 }
 
 export function SectionHeading({
-  eyebrow,
   title,
+  tone = "ink",
   action,
 }: {
-  eyebrow?: string;
   title: string;
+  tone?: Tone;
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-10 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0">
-        {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
-        <h2 className="text-4xl leading-tight sm:text-5xl">{title}</h2>
+    <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <ToneBar tone={tone} className="mb-5" />
+        <h2 className="display-lg">{title}</h2>
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -42,9 +37,8 @@ export function SectionHeading({
 
 export function TextLink({ to, children }: { to: NavTo; children: ReactNode }) {
   return (
-    <Link to={to} className="group inline-flex items-center gap-2 text-sm font-medium text-foreground">
-      <span className="link-underline">{children}</span>
-      <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-1" aria-hidden />
+    <Link to={to} className="ui link font-medium text-ink">
+      {children}
     </Link>
   );
 }
@@ -62,10 +56,10 @@ export function ButtonLink({
     <Link
       to={to}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-sm px-6 py-3 text-sm font-medium transition-colors",
+        "ui inline-flex items-center justify-center px-5 py-3 font-semibold transition-colors",
         variant === "solid"
-          ? "bg-primary text-primary-foreground hover:bg-accent"
-          : "border border-foreground/30 text-foreground hover:border-foreground",
+          ? "bg-ink text-paper hover:bg-sign"
+          : "border-2 border-ink text-ink hover:bg-ink hover:text-paper",
       )}
     >
       {children}
@@ -86,17 +80,24 @@ export function ImagePlaceholder({
     <div
       role="img"
       aria-label={`Placeholder: ${label}`}
-      className={cn("placeholder-stripes flex flex-col items-center justify-center gap-3 border p-6 text-center", ratio, className)}
+      className={cn(
+        "flex items-end border-2 border-dashed border-line bg-surface p-5",
+        ratio,
+        className,
+      )}
     >
-      <ImageIcon className="h-6 w-6 text-muted-foreground" aria-hidden />
-      <p className="eyebrow max-w-[16rem]">{label}</p>
+      <p className="ui max-w-[18rem] text-ink-soft">{label}</p>
     </div>
   );
 }
 
+/** Flags content that is still placeholder copy, so nobody mistakes it for published fact. */
 export function DraftNote({ children }: { children: ReactNode }) {
   return (
-    <p className="mt-4 border-l-2 border-accent pl-3 text-xs italic text-muted-foreground">{children}</p>
+    <p className="ui mt-6 inline-flex max-w-xl gap-2 bg-marigold/15 px-3 py-2 text-ink-soft">
+      <span className="font-semibold text-ink">Draft</span>
+      <span>{children}</span>
+    </p>
   );
 }
 
@@ -114,21 +115,21 @@ export function CtaSection({
   children?: ReactNode;
 }) {
   return (
-    <section className="bg-primary text-primary-foreground">
-      <Container className="py-24 sm:py-32">
-        <Reveal className="max-w-3xl">
-          <h2 className="text-5xl leading-[1.05] sm:text-7xl">{title}</h2>
-          <p className="mt-6 max-w-xl text-lg text-primary-foreground/70">{body}</p>
-          <div className="mt-10 flex flex-wrap items-center gap-6">
-            <Link
-              to={to}
-              className="inline-flex items-center gap-2 rounded-sm bg-primary-foreground px-6 py-3 text-sm font-medium text-primary transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              {cta} <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-            {children}
-          </div>
-        </Reveal>
+    <section className="bg-marigold text-marigold-ink">
+      <Container className="grid gap-10 py-20 sm:py-28 md:grid-cols-12 md:items-end">
+        <div className="md:col-span-8">
+          <h2 className="display-xl">{title}</h2>
+          <p className="mt-6 max-w-xl text-lg">{body}</p>
+        </div>
+        <div className="flex flex-col items-start gap-4 md:col-span-4 md:items-end">
+          <Link
+            to={to}
+            className="ui inline-flex bg-marigold-ink px-6 py-3.5 font-semibold text-marigold transition-colors hover:bg-sign hover:text-sign-ink"
+          >
+            {cta}
+          </Link>
+          {children}
+        </div>
       </Container>
     </section>
   );

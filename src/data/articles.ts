@@ -27,9 +27,7 @@ const draftBody = (topic: string) => [
   {
     id: "what-i-would-do-differently",
     heading: "What I would do differently",
-    paragraphs: [
-      "Draft placeholder for reflections and practical takeaways.",
-    ],
+    paragraphs: ["Draft placeholder for reflections and practical takeaways."],
   },
   {
     id: "closing",
@@ -44,7 +42,8 @@ export const articles: Article[] = [
     slug: "before-building-a-startup-in-nepal",
     title: "What I Wish I Had Understood Before Building a Startup in Nepal",
     subtitle: "Notes on the gap between planning a business and actually running one.",
-    excerpt: "The lessons that only show up once you start — about customers, operations, and patience.",
+    excerpt:
+      "The lessons that only show up once you start — about customers, operations, and patience.",
     category: "Founder Reflections",
     publishedAt: null,
     status: "draft",
@@ -67,7 +66,8 @@ export const articles: Article[] = [
     slug: "technology-and-local-businesses",
     title: "Where Technology Can Actually Help Local Businesses",
     subtitle: "Separating useful tools from technology for its own sake.",
-    excerpt: "Not every problem needs an app. Thinking about where software genuinely earns its place.",
+    excerpt:
+      "Not every problem needs an app. Thinking about where software genuinely earns its place.",
     category: "Technology",
     publishedAt: null,
     status: "draft",

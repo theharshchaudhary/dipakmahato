@@ -12,9 +12,8 @@ export const profile: Profile = {
 };
 
 export const navItems: NavItem[] = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  { label: "Writing", to: "/writing" },
-  { label: "Ventures", to: "/ventures" },
-  { label: "Contact", to: "/contact" },
+  { label: "About", to: "/about", tone: "ink" },
+  { label: "Writing", to: "/writing", tone: "crimson" },
+  { label: "Ventures", to: "/ventures", tone: "sign" },
+  { label: "Contact", to: "/contact", tone: "marigold" },
 ];

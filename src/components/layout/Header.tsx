@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { navItems, profile } from "@/data/profile";
+import { pageTone, useSite } from "@/lib/site";
 import { toneBg } from "@/lib/tone";
 import { cn } from "@/lib/utils";
 
 export function Header() {
+  const site = useSite();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -29,15 +30,15 @@ export function Header() {
           onClick={() => setOpen(false)}
           className="font-display text-xl font-semibold tracking-tight"
         >
-          {profile.shortName}
+          {site.shortName}
         </Link>
 
         <nav aria-label="Primary" className="hidden md:block">
           <ul className="flex items-center gap-1">
-            {navItems.map((item) => (
-              <li key={item.to}>
+            {site.nav.map((item) => (
+              <li key={item.key}>
                 <Link
-                  to={item.to}
+                  to={item.path}
                   className="ui group relative block px-3 py-2 text-ink-soft transition-colors hover:text-ink"
                   activeProps={{ className: "!text-ink font-semibold", "aria-current": "page" }}
                 >
@@ -48,7 +49,7 @@ export function Header() {
                         aria-hidden
                         className={cn(
                           "absolute inset-x-3 -bottom-[13px] h-1 origin-left transition-transform duration-300",
-                          toneBg[item.tone],
+                          toneBg[pageTone[item.key]],
                           isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
                         )}
                       />
@@ -79,14 +80,14 @@ export function Header() {
           className="border-t border-line bg-paper md:hidden"
         >
           <ul className="mx-auto max-w-6xl px-4 pb-6 pt-2">
-            {navItems.map((item) => (
-              <li key={item.to}>
+            {site.nav.map((item) => (
+              <li key={item.key}>
                 <Link
-                  to={item.to}
+                  to={item.path}
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-4 border-b border-line py-4 font-display text-3xl font-semibold"
                 >
-                  <span aria-hidden className={cn("h-6 w-1.5", toneBg[item.tone])} />
+                  <span aria-hidden className={cn("h-6 w-1.5", toneBg[pageTone[item.key]])} />
                   {item.label}
                 </Link>
               </li>

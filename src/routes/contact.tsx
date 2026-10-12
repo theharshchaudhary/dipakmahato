@@ -1,30 +1,43 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { Container, ToneBar } from "@/components/common";
-import { profile } from "@/data/profile";
+import { getPage, sendContactMessage, type ContactInput } from "@/lib/api";
+import { profileLabel } from "@/lib/profiles";
+import { breadcrumbSchema, buildHead } from "@/lib/seo";
+import { siteFromMatches, useSite } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact — Dipak Kumar Mahato" },
-      {
-        name: "description",
-        content:
-          "Get in touch with Dipak Kumar Mahato about partnerships, media, speaking, or collaboration.",
-      },
-      { property: "og:title", content: "Contact Dipak Kumar Mahato" },
-      { property: "og:description", content: "Let's start a conversation." },
-    ],
-  }),
+  loader: () => getPage("contact"),
+  head: ({ loaderData: page, matches }) => {
+    const site = siteFromMatches(matches);
+    if (!site || !page) return {};
+    return buildHead(site, {
+      path: "/contact",
+      title: page.seo.title,
+      description: page.seo.description,
+      image: page.seo.image,
+      schema: [
+        {
+          "@type": "ContactPage",
+          url: `${site.siteUrl}/contact`,
+          about: { "@id": `${site.siteUrl}/#person` },
+        },
+        breadcrumbSchema(site, [
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
+        ]),
+      ],
+    });
+  },
   component: Contact,
 });
 
-type Fields = { name: string; email: string; subject: string; message: string };
-const empty: Fields = { name: "", email: "", subject: "", message: "" };
+type Field = Exclude<keyof ContactInput, "website">;
+const empty: ContactInput = { name: "", email: "", subject: "", message: "", website: "" };
 
-function validate(f: Fields) {
-  const e: Partial<Record<keyof Fields, string>> = {};
+function validate(f: ContactInput) {
+  const e: Partial<Record<Field, string>> = {};
   if (!f.name.trim()) e.name = "Enter your name.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()))
     e.email = "Enter an email address like name@example.com.";
@@ -33,42 +46,48 @@ function validate(f: Fields) {
   return e;
 }
 
-const inquiries = [
-  {
-    title: "Business partnerships",
-    body: "Working together on commerce, operations, or technology.",
-  },
-  {
-    title: "Media and speaking",
-    body: "Interviews, panels, and talks on entrepreneurship in Nepal.",
-  },
-  { title: "Collaboration", body: "Projects, ideas, and communities building useful things." },
-];
+type Status =
+  { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "failed"; message: string };
 
 function Contact() {
-  const [fields, setFields] = useState<Fields>(empty);
-  const [errors, setErrors] = useState<Partial<Record<keyof Fields, string>>>({});
-  const [opened, setOpened] = useState(false);
+  const site = useSite();
+  const { content: c } = Route.useLoaderData();
+  const [fields, setFields] = useState<ContactInput>(empty);
+  const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
+  const [status, setStatus] = useState<Status>({ kind: "idle" });
 
-  // No backend yet: hand the message to the visitor's email app, pre-filled.
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const errs = validate(fields);
     setErrors(errs);
     const firstError = Object.keys(errs)[0];
     if (firstError) {
-      setOpened(false);
       document.getElementById(`f-${firstError}`)?.focus();
       return;
     }
-    const body = `${fields.message.trim()}\n\n— ${fields.name.trim()} (${fields.email.trim()})`;
-    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(
-      fields.subject.trim(),
-    )}&body=${encodeURIComponent(body)}`;
-    setOpened(true);
+
+    setStatus({ kind: "sending" });
+    try {
+      const result = await sendContactMessage({ data: fields });
+      if (result.ok) {
+        setFields(empty);
+        setStatus({ kind: "sent" });
+        return;
+      }
+      if (result.errors) setErrors(result.errors as Partial<Record<Field, string>>);
+      setStatus({
+        kind: "failed",
+        message: result.message ?? "Check the highlighted fields and send again.",
+      });
+    } catch {
+      setStatus({
+        kind: "failed",
+        message: `The message couldn't be sent. Try again, or email ${site.email}.`,
+      });
+    }
   };
 
-  const field = (key: keyof Fields, label: string, type = "text", textarea = false) => {
+  const field = (key: Field, label: string, type = "text", textarea = false) => {
     const err = errors[key];
     const common = {
       id: `f-${key}`,
@@ -88,7 +107,11 @@ function Contact() {
         <label htmlFor={`f-${key}`} className="ui font-semibold">
           {label}
         </label>
-        {textarea ? <textarea rows={6} {...common} /> : <input type={type} {...common} />}
+        {textarea ? (
+          <textarea rows={6} {...common} />
+        ) : (
+          <input type={type} autoComplete={key === "subject" ? "off" : key} {...common} />
+        )}
         {err && (
           <p id={`e-${key}`} className="ui mt-2 text-crimson">
             {err}
@@ -103,35 +126,37 @@ function Contact() {
       <div className="grid gap-16 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <ToneBar tone="marigold" className="mb-6" />
-          <h1 className="display-xl">Let's talk.</h1>
-          <p className="mt-6 text-2xl leading-snug text-ink-soft">
-            Write to me directly, or use the form and it will open in your email app.
-          </p>
+          <h1 className="display-xl">{c.heading}</h1>
+          {c.lead && <p className="mt-6 text-2xl leading-snug text-ink-soft">{c.lead}</p>}
           <ul className="ui mt-8 space-y-2 text-lg">
             <li>
-              <a href={`mailto:${profile.email}`} className="link font-semibold">
-                {profile.email}
+              <a href={`mailto:${site.email}`} className="link font-semibold">
+                {site.email}
               </a>
             </li>
-            <li>
-              <a
-                href={profile.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="link font-semibold"
-              >
-                LinkedIn
-              </a>
-            </li>
-          </ul>
-          <dl className="mt-12 border-t-2 border-ink">
-            {inquiries.map((i) => (
-              <div key={i.title} className="border-b border-line py-5">
-                <dt className="display-md">{i.title}</dt>
-                <dd className="mt-1 text-ink-soft">{i.body}</dd>
-              </div>
+            {site.sameAs.map((url) => (
+              <li key={url}>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="me noopener noreferrer"
+                  className="link font-semibold"
+                >
+                  {profileLabel(url)}
+                </a>
+              </li>
             ))}
-          </dl>
+          </ul>
+          {c.inquiries.length > 0 && (
+            <dl className="mt-12 border-t-2 border-ink">
+              {c.inquiries.map((i) => (
+                <div key={i.title} className="border-b border-line py-5">
+                  <dt className="display-md">{i.title}</dt>
+                  <dd className="mt-1 text-ink-soft">{i.body}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </div>
 
         <form
@@ -144,22 +169,33 @@ function Contact() {
           {field("email", "Your email", "email")}
           {field("subject", "Subject")}
           {field("message", "Message", "text", true)}
+          {/* Honeypot: hidden from people and screen readers; bots tend to fill it. */}
+          <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <label htmlFor="f-website">Leave this empty</label>
+            <input
+              id="f-website"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={fields.website}
+              onChange={(ev) => setFields((f) => ({ ...f, website: ev.target.value }))}
+            />
+          </div>
           <button
             type="submit"
-            className="ui bg-marigold px-6 py-3.5 font-semibold text-marigold-ink transition-colors hover:bg-ink hover:text-paper"
+            disabled={status.kind === "sending"}
+            className="ui bg-marigold px-6 py-3.5 font-semibold text-marigold-ink transition-colors hover:bg-ink hover:text-paper disabled:opacity-60"
           >
-            Continue in email app
+            {status.kind === "sending" ? "Sending…" : "Send message"}
           </button>
           <div aria-live="polite">
-            {opened && (
-              <p className="ui border-l-4 border-marigold bg-paper p-4 text-ink-soft">
-                Your email app should now be open with this message filled in. If nothing opened,
-                write to{" "}
-                <a className="link text-ink" href={`mailto:${profile.email}`}>
-                  {profile.email}
-                </a>
-                .
+            {status.kind === "sent" && (
+              <p className="ui border-l-4 border-marigold bg-paper p-4 text-ink">
+                {c.successMessage}
               </p>
+            )}
+            {status.kind === "failed" && (
+              <p className="ui border-l-4 border-crimson bg-paper p-4 text-ink">{status.message}</p>
             )}
           </div>
         </form>

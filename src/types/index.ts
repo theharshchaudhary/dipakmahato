@@ -1,24 +1,132 @@
-export type ArticleCategory =
-  "Entrepreneurship" | "Business Strategy" | "Technology" | "Founder Reflections";
+/** Shapes returned by the Laravel API (backend/app/Http/Resources). */
 
-export interface ArticleSection {
-  id: string;
-  heading: string;
-  paragraphs: string[];
+/** Each section of the site owns one colour from the palette. */
+export type Tone = "ink" | "sign" | "crimson" | "marigold";
+
+export type PageKey = "home" | "about" | "writing" | "ventures" | "contact";
+
+export type SitePath = "/" | "/about" | "/writing" | "/ventures" | "/contact";
+
+export interface Seo {
+  title: string | null;
+  description: string | null;
+  image: string | null;
 }
 
-export interface Article {
+export interface NavItem {
+  label: string;
+  path: SitePath;
+  key: PageKey;
+}
+
+export interface Site {
+  fullName: string;
+  shortName: string;
+  alternateNames: string[];
+  jobTitle: string;
+  organization: { name: string; url: string | null } | null;
+  positioning: string;
+  location: string | null;
+  email: string;
+  linkedin: string | null;
+  sameAs: string[];
+  portrait: string | null;
+  defaultOgImage: string | null;
+  siteUrl: string;
+  verification: { google: string | null; bing: string | null };
+  nav: NavItem[];
+}
+
+export interface Cta {
+  ctaTitle: string;
+  ctaBody?: string | null;
+  ctaLabel: string;
+}
+
+export interface HomeContent extends Cta {
+  heroHeadline: string;
+  heroLead: string;
+  primaryCtaLabel: string;
+  secondaryCtaLabel: string;
+  focusHeading: string;
+  focusItems: {
+    title: string;
+    body: string;
+    ctaLabel: string;
+    page: Exclude<PageKey, "home">;
+    tone: Tone;
+  }[];
+  writingHeading: string;
+  spotlightBody?: string | null;
+  spotlightCtaLabel?: string | null;
+}
+
+export interface AboutContent extends Cta {
+  lead: string;
+  note?: string | null;
+  sections: { title: string; body: string }[];
+  interestsHeading?: string | null;
+  interests: string[];
+}
+
+export interface WritingContent {
+  heading: string;
+  lead?: string | null;
+  note?: string | null;
+  emptyMessage: string;
+}
+
+export interface VenturesContent extends Cta {
+  heading: string;
+  lead?: string | null;
+  note?: string | null;
+}
+
+export interface ContactContent {
+  heading: string;
+  lead?: string | null;
+  inquiries: { title: string; body: string }[];
+  successMessage: string;
+}
+
+export interface PageContentMap {
+  home: HomeContent;
+  about: AboutContent;
+  writing: WritingContent;
+  ventures: VenturesContent;
+  contact: ContactContent;
+}
+
+export interface Page<K extends PageKey> {
+  key: K;
+  path: SitePath;
+  content: PageContentMap[K];
+  seo: Seo;
+  updatedAt: string | null;
+}
+
+export interface Category {
+  name: string;
+  slug: string;
+}
+
+export interface ArticleSummary {
   slug: string;
   title: string;
-  subtitle: string;
+  subtitle: string | null;
   excerpt: string;
-  category: ArticleCategory;
-  /** ISO date once published; null while the article is a draft. */
+  category: Category | null;
   publishedAt: string | null;
-  status: "draft" | "published";
+  updatedAt: string | null;
   readingMinutes: number;
-  featured?: boolean;
-  sections: ArticleSection[];
+  featured: boolean;
+  coverImage: string | null;
+}
+
+export interface Article extends ArticleSummary {
+  html: string;
+  toc: { id: string; heading: string }[];
+  seo: Seo;
 }
 
 export interface Venture {
@@ -27,28 +135,16 @@ export interface Venture {
   tagline: string;
   role: string;
   description: string;
-  problem: string;
-  product: string;
+  problem: string | null;
+  product: string | null;
   milestones: string[];
   website: string | null;
-  primary?: boolean;
+  coverImage: string | null;
+  screenshots: string[];
+  primary: boolean;
 }
 
-/** Each section of the site owns one colour from the palette. */
-export type Tone = "ink" | "sign" | "crimson" | "marigold";
-
-export interface NavItem {
-  label: string;
-  to: "/" | "/about" | "/writing" | "/ventures" | "/contact";
-  tone: Tone;
-}
-
-export interface Profile {
-  fullName: string;
-  shortName: string;
-  title: string;
-  positioning: string;
-  email: string;
-  linkedin: string;
-  portraitUrl: string | null;
+export interface SitemapEntry {
+  path: string;
+  lastModified: string | null;
 }

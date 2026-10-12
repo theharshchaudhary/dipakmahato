@@ -9,6 +9,7 @@ import {
 import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { fetchSite } from "@/lib/api";
 import { ButtonLink, Container, ToneBar } from "@/components/common";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -59,26 +60,33 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRoute({
-  head: () => ({
+  // Site settings drive the header, footer and every page's metadata. They change
+  // rarely, so load them once per visit rather than on each navigation.
+  loader: () => fetchSite(),
+  staleTime: Infinity,
+  head: ({ loaderData: site }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Dipak Kumar Mahato — Entrepreneur, CEO of Zedfo" },
-      {
-        name: "description",
-        content: "Personal website of Dipak Kumar Mahato, entrepreneur and CEO of Zedfo.",
-      },
-      { name: "author", content: "Dipak Kumar Mahato" },
       { name: "theme-color", content: "#f3f4f8", media: "(prefers-color-scheme: light)" },
       { name: "theme-color", content: "#0e1224", media: "(prefers-color-scheme: dark)" },
-      { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Dipak Kumar Mahato" },
-      { name: "twitter:card", content: "summary_large_image" },
+      ...(site
+        ? [
+            { name: "author", content: site.fullName },
+            ...(site.verification.google
+              ? [{ name: "google-site-verification", content: site.verification.google }]
+              : []),
+            ...(site.verification.bing
+              ? [{ name: "msvalidate.01", content: site.verification.bing }]
+              : []),
+          ]
+        : [{ title: "Site unavailable" }]),
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "sitemap", type: "application/xml", href: "/sitemap.xml" },
     ],
   }),
   shellComponent: RootShell,

@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { toneBg } from "@/lib/tone";
-import type { NavItem, Tone } from "@/types";
+import type { SitePath, Tone } from "@/types";
 
-type NavTo = NavItem["to"];
+type NavTo = SitePath;
 
 export function Container({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cn("mx-auto w-full max-w-6xl px-4 sm:px-8", className)}>{children}</div>;
@@ -91,12 +91,11 @@ export function ImagePlaceholder({
   );
 }
 
-/** Flags content that is still placeholder copy, so nobody mistakes it for published fact. */
+/** Optional highlighted note set per page in the admin, e.g. to flag placeholder copy. */
 export function DraftNote({ children }: { children: ReactNode }) {
   return (
     <p className="ui mt-6 inline-flex max-w-xl gap-2 bg-marigold/15 px-3 py-2 text-ink-soft">
-      <span className="font-semibold text-ink">Draft</span>
-      <span>{children}</span>
+      {children}
     </p>
   );
 }
@@ -109,7 +108,7 @@ export function CtaSection({
   children,
 }: {
   title: string;
-  body: string;
+  body?: string | null | undefined;
   cta: string;
   to?: NavTo;
   children?: ReactNode;
@@ -119,7 +118,7 @@ export function CtaSection({
       <Container className="grid gap-10 py-20 sm:py-28 md:grid-cols-12 md:items-end">
         <div className="md:col-span-8">
           <h2 className="display-xl">{title}</h2>
-          <p className="mt-6 max-w-xl text-lg">{body}</p>
+          {body && <p className="mt-6 max-w-xl text-lg">{body}</p>}
         </div>
         <div className="flex flex-col items-start gap-4 md:col-span-4 md:items-end">
           <Link

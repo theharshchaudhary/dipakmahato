@@ -1,6 +1,6 @@
 import { ButtonLink, Container, PersonChip } from "@/components/common";
 import { initials } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { cn, delay } from "@/lib/utils";
 import type { HomeContent, Site } from "@/types";
 
 /**
@@ -19,7 +19,10 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
   return (
     <section className="relative overflow-hidden border-b border-line">
       {/* Grid sits behind the lower part of the section, edge to edge. */}
-      <div aria-hidden className="hero-grid absolute inset-x-0 bottom-0 top-[58%] opacity-80" />
+      <div
+        aria-hidden
+        className="hero-grid animate-draw-across absolute inset-x-0 bottom-0 top-[58%] opacity-80"
+      />
 
       <Container className="relative">
         {keywords.length > 0 && (
@@ -27,8 +30,10 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
             aria-label="Focus"
             className="ui flex justify-between gap-4 pt-8 text-sm uppercase tracking-[0.12em] text-ink sm:text-base"
           >
-            {keywords.map((word) => (
-              <li key={word}>{word}</li>
+            {keywords.map((word, i) => (
+              <li key={word} className="animate-fade" style={delay(i * 120)}>
+                {word}
+              </li>
             ))}
           </ul>
         )}
@@ -43,22 +48,30 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
         >
           {/* Left: who, then the first half of the sentence. */}
           <div className="flex flex-col justify-center lg:pb-40">
-            <PersonChip name={site.fullName} portrait={site.portrait}>
-              {c.heroHandle || role}
-            </PersonChip>
+            <div className="animate-rise" style={delay(100)}>
+              <PersonChip name={site.fullName} portrait={site.portrait}>
+                {c.heroHandle || role}
+              </PersonChip>
+            </div>
             {/* The name is the h1 so the page plainly answers a search for it. */}
-            <h1 className="mt-5 font-display text-[2.375rem] font-bold leading-[1.02] tracking-[-0.02em] sm:text-5xl lg:text-[2.75rem] xl:text-5xl">
+            <h1
+              style={delay(200)}
+              className="animate-rise mt-5 font-display text-[2.375rem] font-bold leading-[1.02] tracking-[-0.02em] sm:text-5xl lg:text-[2.75rem] xl:text-5xl"
+            >
               {c.heroGreeting && `${c.heroGreeting} `}
               {site.fullName}
               {c.heroIntro && ","}
             </h1>
             {c.heroIntro && (
-              <p className="mt-5 max-w-sm font-display text-xl leading-snug text-ink">
+              <p
+                style={delay(320)}
+                className="animate-rise mt-5 max-w-sm font-display text-xl leading-snug text-ink"
+              >
                 {c.heroIntro}
               </p>
             )}
             {(c.primaryCtaLabel || c.secondaryCtaLabel) && (
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="animate-rise mt-8 flex flex-wrap gap-3" style={delay(440)}>
                 {c.primaryCtaLabel && <ButtonLink to="/ventures">{c.primaryCtaLabel}</ButtonLink>}
                 {c.secondaryCtaLabel && (
                   <ButtonLink to="/about" variant="outline">
@@ -71,7 +84,11 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
 
           {/* Centre: the photo in a thin frame, standing on the grid. */}
           <div className="relative mx-auto flex w-full max-w-sm items-end lg:max-w-none">
-            <div aria-hidden className="absolute inset-x-0 bottom-0 top-6 border border-ink/30" />
+            <div
+              aria-hidden
+              style={delay(150)}
+              className="animate-draw-down absolute inset-x-0 bottom-0 top-6 border border-ink/30"
+            />
             {image ? (
               <img
                 src={image}
@@ -79,7 +96,8 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
                 width={800}
                 height={1000}
                 fetchPriority="high"
-                className="relative z-10 mx-auto max-h-[36rem] w-[88%] object-contain object-bottom"
+                style={delay(350)}
+                className="animate-rise relative z-10 mx-auto max-h-[36rem] w-[88%] object-contain object-bottom"
               />
             ) : (
               // No photo uploaded yet: keep the composition with a large monogram.
@@ -96,12 +114,17 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
           {hasRight && (
             <div className="flex flex-col justify-between gap-12 pb-10 lg:pb-12 lg:pt-28">
               {c.heroQuestion ? (
-                <p className="display-question max-w-[12ch]">{c.heroQuestion}</p>
+                <p className="display-question animate-rise max-w-[12ch]" style={delay(600)}>
+                  {c.heroQuestion}
+                </p>
               ) : (
                 <span />
               )}
               {c.heroSignature && (
-                <div className="flex items-end gap-3 self-start lg:self-end">
+                <div
+                  className="animate-fade flex items-end gap-3 self-start lg:self-end"
+                  style={delay(900)}
+                >
                   <span aria-hidden className="monogram text-5xl text-ink">
                     {monogram}
                   </span>

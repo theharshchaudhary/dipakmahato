@@ -54,6 +54,13 @@ function paletteCss(palette: Partial<Record<PaletteKey, string>>): string {
     .join("");
 }
 
+// Entrance, scroll and page-change animations switched off; hover feedback stays.
+const motionOff = [
+  "*,*::before,*::after{animation:none!important}",
+  ".scroll-progress{display:none}",
+  "::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}",
+].join("");
+
 export function themeCss(theme: Theme | undefined, customCss?: string | null): string {
   if (!theme) return "";
   const heading = headingFonts[theme.headingFont];
@@ -77,6 +84,7 @@ export function themeCss(theme: Theme | undefined, customCss?: string | null): s
     `:root{${root}}`,
     `@media (prefers-color-scheme: dark){:root{${dark}}}`,
     theme.showGrid === false ? ".hero-grid{display:none}" : "",
+    theme.animations === false ? motionOff : "",
     // Custom CSS can't close the <style> element it is placed in.
     customCss ? customCss.replace(/<\/style/gi, "<\\/style") : "",
   ].join("\n");

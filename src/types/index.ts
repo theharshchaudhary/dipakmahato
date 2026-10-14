@@ -42,6 +42,7 @@ export interface Theme {
   serifFont: string;
   buttonShape: "sharp" | "soft" | "pill";
   showGrid: boolean;
+  animations?: boolean;
 }
 
 export interface Site {

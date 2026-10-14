@@ -32,16 +32,19 @@ export function ArticleMeta({
 /** One essay as a ruled row: meta in the margin, the title as the statement, the excerpt in the serif. */
 export function ArticleRow({ article }: { article: ArticleSummary }) {
   return (
-    <li className="group relative grid gap-4 border-t border-ink/15 py-8 md:grid-cols-12 md:gap-8">
+    <li className="reveal group relative grid gap-4 border-t border-ink/15 py-8 before:absolute before:inset-x-0 before:-top-px before:h-px before:origin-left before:scale-x-0 before:bg-crimson before:transition-transform before:duration-500 before:ease-out hover:before:scale-x-100 md:grid-cols-12 md:gap-8">
       <ArticleMeta article={article} className="md:col-span-3 md:flex-col md:items-start" />
       <div className="md:col-span-9">
         <h3 className="display-md max-w-2xl">
           <Link
             to="/writing/$slug"
             params={{ slug: article.slug }}
-            className="decoration-1 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
+            className="after:absolute after:inset-0"
           >
-            {article.title}
+            {/* The nudge sits on an inner span: moving the link itself would shrink its full-row hit area. */}
+            <span className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5">
+              {article.title}
+            </span>
           </Link>
         </h3>
         <p className="mt-3 max-w-2xl font-serif text-lg leading-relaxed text-ink-soft">

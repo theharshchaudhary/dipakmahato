@@ -79,6 +79,7 @@ class ThemeDefaults
         'serifFont' => 'newsreader',
         'buttonShape' => 'sharp',
         'showGrid' => true,
+        'animations' => true,
     ];
 
     /** Saved theme merged over the defaults, key by key. */

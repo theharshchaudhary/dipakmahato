@@ -13,6 +13,7 @@ use App\Models\SiteSetting;
 use App\Models\User;
 use Database\Seeders\ContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -140,5 +141,19 @@ class AdminPanelTest extends TestCase
             ->fillForm(['theme.light.text' => 'red; } body { display:none'])
             ->call('save')
             ->assertHasFormErrors(['theme.light.text']);
+    }
+
+    public function test_saving_settings_keeps_an_uploaded_portrait(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('site/me.png', 'png');
+        SiteSetting::current()->update(['portrait_path' => 'site/me.png']);
+
+        Livewire::test(ManageSiteSettings::class)
+            ->fillForm(['job_title' => 'Founder'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('site/me.png', SiteSetting::current()->portrait_path);
     }
 }

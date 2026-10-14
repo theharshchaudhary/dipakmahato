@@ -151,7 +151,7 @@ function Contact() {
             <Label>What to write about</Label>
             <dl className="mt-6 border-b border-ink/15">
               {c.inquiries.map((i) => (
-                <div key={i.title} className="border-t border-ink/15 py-6">
+                <div key={i.title} className="reveal border-t border-ink/15 py-6">
                   <dt className="display-md">{i.title}</dt>
                   <dd className="mt-2 font-serif text-lg leading-relaxed text-ink-soft">
                     {i.body}
@@ -194,7 +194,7 @@ function Contact() {
             </button>
             <div aria-live="polite">
               {status.kind === "sent" && (
-                <p className="ui inline-flex items-start gap-2.5 rounded-2xl bg-marigold/15 px-4 py-3 text-ink">
+                <p className="ui animate-rise inline-flex items-start gap-2.5 rounded-2xl bg-marigold/15 px-4 py-3 text-ink">
                   <span
                     aria-hidden
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-marigold"
@@ -203,7 +203,7 @@ function Contact() {
                 </p>
               )}
               {status.kind === "failed" && (
-                <p className="ui inline-flex items-start gap-2.5 rounded-2xl bg-crimson/10 px-4 py-3 text-ink">
+                <p className="ui animate-rise inline-flex items-start gap-2.5 rounded-2xl bg-crimson/10 px-4 py-3 text-ink">
                   <span
                     aria-hidden
                     className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson"

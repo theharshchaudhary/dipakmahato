@@ -89,7 +89,7 @@ function About() {
         <div className="lg:col-span-7 lg:col-start-6">
           <dl>
             {c.sections.map((s) => (
-              <div key={s.title} className="border-t border-ink/15 pb-10 pt-5">
+              <div key={s.title} className="reveal border-t border-ink/15 pb-10 pt-5">
                 <dt className="display-md">{s.title}</dt>
                 <dd className="mt-4 whitespace-pre-line font-serif text-lg leading-relaxed text-ink-soft">
                   {s.body}

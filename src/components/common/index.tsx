@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { initials } from "@/lib/format";
 import { toneBg } from "@/lib/tone";
-import { cn } from "@/lib/utils";
+import { cn, delay } from "@/lib/utils";
 import type { SitePath, Tone } from "@/types";
 
 /*
@@ -48,7 +48,7 @@ export function SectionHeading({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-10 border-t border-ink/15 pt-5 sm:mb-14">
+    <div className="reveal mb-10 border-t border-ink/15 pt-5 sm:mb-14">
       <div className="flex items-center justify-between gap-6">
         {label ? <Label tone={tone}>{label}</Label> : <span />}
         {action && <div className="shrink-0">{action}</div>}
@@ -79,15 +79,24 @@ export function PageHeader({
 }) {
   return (
     <header className="relative overflow-hidden border-b border-line">
-      <div aria-hidden className="hero-grid absolute inset-x-0 bottom-0 h-24 opacity-80" />
+      <div
+        aria-hidden
+        className="hero-grid animate-draw-across absolute inset-x-0 bottom-0 h-24 opacity-80"
+      />
       <Container className="relative pb-32 pt-8">
-        <div className="flex items-center justify-between gap-6">
+        <div className="animate-fade flex items-center justify-between gap-6">
           <Label tone={tone}>{label}</Label>
           {meta && <div className="label text-ink-soft">{meta}</div>}
         </div>
         <div className="mt-12 grid gap-8 lg:mt-16 lg:grid-cols-12 lg:items-end">
-          <h1 className="display-xl lg:col-span-7">{title}</h1>
-          {lead && <p className="lead-serif text-ink-soft lg:col-span-5">{lead}</p>}
+          <h1 className="display-xl animate-rise lg:col-span-7" style={delay(100)}>
+            {title}
+          </h1>
+          {lead && (
+            <p className="lead-serif animate-rise text-ink-soft lg:col-span-5" style={delay(220)}>
+              {lead}
+            </p>
+          )}
         </div>
         {children}
       </Container>
@@ -104,8 +113,11 @@ export function Frame({
   className?: string | undefined;
 }) {
   return (
-    <div className={cn("relative pt-6", className)}>
-      <div aria-hidden className="absolute inset-0 border border-ink/30" />
+    <div className={cn("group/frame relative pt-6", className)}>
+      <div
+        aria-hidden
+        className="absolute inset-0 border border-ink/30 transition-transform duration-500 ease-out group-hover/frame:-translate-y-1.5 group-hover/frame:translate-x-1.5"
+      />
       <div className="relative px-6">{children}</div>
     </div>
   );
@@ -145,7 +157,7 @@ export function ButtonLink({
     <Link
       to={to}
       className={cn(
-        "ui inline-flex items-center justify-center px-5 py-3 font-semibold transition-colors",
+        "ui inline-flex items-center justify-center px-5 py-3 font-semibold transition duration-200 hover:-translate-y-0.5 active:translate-y-0",
         variant === "solid"
           ? "rounded-button bg-primary text-primary-ink hover:opacity-90"
           : "rounded-button border border-primary text-ink hover:bg-primary hover:text-primary-ink",
@@ -159,7 +171,10 @@ export function ButtonLink({
 /** Optional highlighted note set per page in the admin, e.g. to flag placeholder copy. */
 export function DraftNote({ children }: { children: ReactNode }) {
   return (
-    <p className="ui mt-8 inline-flex max-w-xl items-start gap-2.5 rounded-2xl bg-marigold/15 px-4 py-2.5 text-sm text-ink-soft">
+    <p
+      className="ui animate-fade mt-8 inline-flex max-w-xl items-start gap-2.5 rounded-2xl bg-marigold/15 px-4 py-2.5 text-sm text-ink-soft"
+      style={delay(400)}
+    >
       <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-marigold" />
       {children}
     </p>
@@ -195,7 +210,7 @@ export function CtaSection({
     <section className="relative overflow-hidden border-t border-line">
       <div aria-hidden className="hero-grid absolute inset-x-0 bottom-0 top-1/2 opacity-80" />
       <Container className="relative grid gap-12 py-20 sm:py-28 lg:grid-cols-12 lg:items-end">
-        <div className="lg:col-span-10">
+        <div className="reveal lg:col-span-10">
           <Label tone="marigold">Get in touch</Label>
           <h2 className="display-question mt-6 max-w-[18ch] text-[clamp(2.5rem,5.4vw,4.5rem)]">
             {title}
@@ -204,7 +219,7 @@ export function CtaSection({
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Link
               to={to}
-              className="ui inline-flex px-6 py-3.5 font-semibold transition rounded-button bg-primary text-primary-ink hover:opacity-90"
+              className="ui inline-flex rounded-button bg-primary px-6 py-3.5 font-semibold text-primary-ink transition duration-200 hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0"
             >
               {cta}
             </Link>
@@ -265,7 +280,17 @@ export function FramedVisual({
   return (
     <Frame className={className}>
       {src ? (
-        <img src={src} alt={alt} loading="lazy" className={cn(ratio, "w-full object-cover")} />
+        <div className="overflow-hidden">
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            className={cn(
+              ratio,
+              "w-full object-cover transition-transform duration-700 ease-out group-hover/frame:scale-[1.03]",
+            )}
+          />
+        </div>
       ) : (
         <div aria-hidden className={cn(ratio, "hero-grid grid place-items-center bg-surface/60")}>
           <span className="display-question px-6 text-center text-ink/15">{fallback}</span>

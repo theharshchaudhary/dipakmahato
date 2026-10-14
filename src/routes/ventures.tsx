@@ -51,7 +51,7 @@ export const Route = createFileRoute("/ventures")({
 
 function Detail({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="grid gap-3 border-t border-ink/15 py-7 md:grid-cols-12 md:gap-8">
+    <div className="reveal grid gap-3 border-t border-ink/15 py-7 md:grid-cols-12 md:gap-8">
       <dt className="label pt-1.5 text-ink-soft md:col-span-3">{label}</dt>
       <dd className="max-w-2xl font-serif text-lg leading-relaxed text-ink md:col-span-9">
         {children}

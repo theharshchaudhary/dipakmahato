@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { delay } from "@/lib/utils";
 import { ArrowLeft, Link2, Linkedin, Mail } from "lucide-react";
 import { useState } from "react";
 import { Container, Frame, Label, PersonChip, SectionHeading, TextLink } from "@/components/common";
@@ -95,10 +96,18 @@ function ArticlePage() {
 
   return (
     <article>
+      {/* Reading progress: fills as the page scrolls (scroll-driven animation, no JavaScript). */}
+      <div aria-hidden className="scroll-progress fixed inset-x-0 top-16 z-30 h-0.5 bg-crimson" />
       <header className="relative overflow-hidden border-b border-line">
-        <div aria-hidden className="hero-grid absolute inset-x-0 bottom-0 h-24 opacity-80" />
+        <div
+          aria-hidden
+          className="hero-grid animate-draw-across absolute inset-x-0 bottom-0 h-24 opacity-80"
+        />
         <Container className="relative pb-32 pt-8">
-          <nav aria-label="Breadcrumb" className="flex items-center justify-between gap-6">
+          <nav
+            aria-label="Breadcrumb"
+            className="animate-fade flex items-center justify-between gap-6"
+          >
             <Link
               to="/writing"
               className="label inline-flex items-center gap-2 text-ink-soft hover:text-ink"
@@ -108,12 +117,21 @@ function ArticlePage() {
             <span className="label text-ink-soft">{article.readingMinutes} min read</span>
           </nav>
           <div className="mt-12 max-w-4xl lg:mt-16">
-            <ArticleMeta article={article} />
-            <h1 className="display-xl mt-6">{article.title}</h1>
+            <div className="animate-rise">
+              <ArticleMeta article={article} />
+            </div>
+            <h1 className="display-xl animate-rise mt-6" style={delay(100)}>
+              {article.title}
+            </h1>
             {article.subtitle && (
-              <p className="lead-serif mt-6 max-w-2xl text-ink-soft">{article.subtitle}</p>
+              <p
+                className="lead-serif animate-rise mt-6 max-w-2xl text-ink-soft"
+                style={delay(220)}
+              >
+                {article.subtitle}
+              </p>
             )}
-            <div className="mt-8">
+            <div className="animate-rise mt-8" style={delay(320)}>
               <PersonChip name={site.fullName} portrait={site.portrait}>
                 By{" "}
                 <Link to="/about" rel="author" className="font-semibold hover:underline">

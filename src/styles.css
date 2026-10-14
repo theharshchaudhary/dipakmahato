@@ -215,9 +215,12 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;
   text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
-  transition: text-decoration-color 0.2s ease;
+  transition:
+    text-decoration-color 0.2s ease,
+    text-underline-offset 0.25s ease;
   &:hover {
     text-decoration-color: currentColor;
+    text-underline-offset: 0.32em;
   }
 }
 
@@ -282,6 +285,113 @@
   }
 }
 
+/*
+ * Motion. One orchestrated entrance per page (hero or page header), gentle
+ * reveals as content scrolls in, and feedback on hover. Delays come from the
+ * --delay custom property so components can stagger without new classes.
+ * Turned off by the Appearance switch (src/lib/theme.ts) and by the
+ * visitor's reduced-motion setting.
+ */
+:root {
+  --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --ease-draw: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Lines drawn across (grid) or downward (frames), like a pen on paper. */
+@keyframes draw-across {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes draw-down {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@utility animate-rise {
+  animation: rise 0.9s var(--ease-out) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@utility animate-fade {
+  animation: fade 1s ease both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@utility animate-draw-across {
+  animation: draw-across 1.6s var(--ease-draw) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@utility animate-draw-down {
+  animation: draw-down 1.3s var(--ease-draw) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+.scroll-progress {
+  transform: scaleX(0);
+}
+
+/* Scroll reveals use native scroll-driven animations; browsers without them just show the content. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+
+  /* Reading progress for essays. */
+  .scroll-progress {
+    transform-origin: left;
+    animation: grow-x linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+/* Page changes cross-fade; the header stays put. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+  animation-timing-function: ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -291,5 +401,14 @@
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+  .reveal,
+  .scroll-progress {
+    animation: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

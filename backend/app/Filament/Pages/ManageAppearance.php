@@ -111,6 +111,9 @@ class ManageAppearance extends Page
                             Toggle::make('theme.showGrid')
                                 ->label('Show the drafting grid')
                                 ->helperText('The fine grid lines behind the hero, page headers and calls to action.'),
+                            Toggle::make('theme.animations')
+                                ->label('Animations')
+                                ->helperText('Entrance motion, reveals on scroll, page cross-fades and the reading-progress bar. Always off for visitors who ask their device for reduced motion.'),
                         ]),
                     ]),
                     Tab::make('Branding')->icon(Heroicon::OutlinedSparkles)->schema([

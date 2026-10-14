@@ -18,7 +18,7 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
+    <header className="[view-transition-name:site-header] sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
       <a
         href="#main"
         className="ui sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:bg-marigold focus:px-3 focus:py-2 focus:text-marigold-ink"
@@ -93,7 +93,7 @@ export function Header() {
         <nav
           id="mobile-nav"
           aria-label="Mobile"
-          className="border-t border-line bg-paper md:hidden"
+          className="animate-fade border-t border-line bg-paper [animation-duration:0.25s] md:hidden"
         >
           <ul className="mx-auto max-w-6xl px-4 pb-6 pt-2">
             {site.nav.map((item) => (

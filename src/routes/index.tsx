@@ -77,7 +77,7 @@ function Home() {
             {c.focusItems.map((f) => (
               <li
                 key={f.title}
-                className="flex flex-col border-t border-ink/15 py-8 first:border-t-0 md:border-t-0 md:px-8 md:first:pl-0 md:last:pr-0"
+                className="reveal flex flex-col border-t border-ink/15 py-8 first:border-t-0 md:border-t-0 md:px-8 md:first:pl-0 md:last:pr-0"
               >
                 <Label tone={f.tone}>{pageLabel[f.page]}</Label>
                 <h3 className="display-md mt-6">{f.title}</h3>

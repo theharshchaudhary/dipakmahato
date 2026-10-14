@@ -9,6 +9,7 @@ use App\Filament\Resources\Ventures\Schemas\VentureForm;
 use App\Filament\Resources\Ventures\Tables\VenturesTable;
 use App\Models\Venture;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -19,6 +20,8 @@ class VentureResource extends Resource
     protected static ?string $model = Venture::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Content';
 
     protected static ?string $recordTitleAttribute = 'name';
 

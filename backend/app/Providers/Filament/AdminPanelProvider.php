@@ -2,22 +2,27 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
+use App\Models\SiteSetting;
+use App\Support\Media;
+use App\Support\ThemeDefaults;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Throwable;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,10 +34,30 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->profile()
-            ->brandName('Dipak Mahato — site admin')
-            ->favicon(asset('favicon.svg'))
-            ->colors([
-                'primary' => Color::hex('#1d3a8f'),
+            ->spa()
+            ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth('7xl')
+            // Branding follows the site's own settings, read per request.
+            ->brandName(fn () => (self::settings()?->short_name ?? 'Site').' — admin')
+            ->brandLogo(fn () => Media::url(self::settings()?->logo_path))
+            ->brandLogoHeight('2rem')
+            ->favicon(fn () => Media::url(self::settings()?->favicon_path) ?? asset('favicon.svg'))
+            ->colors(fn () => [
+                'primary' => Color::hex(self::settings()?->resolvedTheme()['light']['ventures'] ?? ThemeDefaults::THEME['light']['ventures']),
+                'gray' => Color::Slate,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make('Content'),
+                NavigationGroup::make('Inbox'),
+                NavigationGroup::make('Design'),
+                NavigationGroup::make('Settings')->collapsed(),
+            ])
+            ->userMenuItems([
+                Action::make('site')
+                    ->label('View website')
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                    ->url(fn () => self::settings()?->site_url ?? '/')
+                    ->openUrlInNewTab(),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -40,9 +65,6 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-                AccountWidget::class,
-            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -57,5 +79,15 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /** Site settings, or null before the database is set up. */
+    private static function settings(): ?SiteSetting
+    {
+        try {
+            return once(fn () => SiteSetting::query()->first());
+        } catch (Throwable) {
+            return null;
+        }
     }
 }

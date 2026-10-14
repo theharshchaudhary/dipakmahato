@@ -131,4 +131,22 @@ class ContentApiTest extends TestCase
 
         $this->assertDatabaseCount(ContactMessage::class, 0);
     }
+
+    public function test_site_includes_default_theme(): void
+    {
+        $this->getJson('/api/site')
+            ->assertJsonPath('theme.headingFont', 'anek')
+            ->assertJsonPath('theme.darkMode', 'auto')
+            ->assertJsonPath('theme.light.footer', '#000000');
+    }
+
+    public function test_page_image_paths_become_urls(): void
+    {
+        $page = Page::query()->where('key', 'home')->first();
+        $page->update(['content' => [...$page->content, 'heroImage' => 'pages/me.png']]);
+
+        $url = $this->getJson('/api/pages/home')->json('content.heroImage');
+        $this->assertStringEndsWith('/storage/pages/me.png', $url);
+        $this->getJson('/api/pages/home')->assertJsonCount(4, 'content.sections');
+    }
 }

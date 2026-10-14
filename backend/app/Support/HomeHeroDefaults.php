@@ -17,6 +17,23 @@ class HomeHeroDefaults
         'heroMonogram' => 'DK',
         'heroSignature' => 'Dipak K. Mahato',
         'heroSignatureNote' => 'Portfolio',
+        'heroImage' => null,
+        'sections' => self::SECTIONS,
+    ];
+
+    /** Home sections below the hero, in display order. Editors can hide and reorder them. */
+    public const SECTIONS = [
+        ['key' => 'focus', 'visible' => true],
+        ['key' => 'writing', 'visible' => true],
+        ['key' => 'venture', 'visible' => true],
+        ['key' => 'cta', 'visible' => true],
+    ];
+
+    public const SECTION_LABELS = [
+        'focus' => "What I'm working on",
+        'writing' => 'Recent writing',
+        'venture' => 'Venture spotlight',
+        'cta' => 'Closing call to action',
     ];
 
     /** Keys the old hero used, replaced by the fields above. */

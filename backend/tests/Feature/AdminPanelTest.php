@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\ManageAppearance;
 use App\Filament\Pages\ManageSiteSettings;
 use App\Filament\Resources\Articles\Pages\CreateArticle;
 use App\Filament\Resources\Pages\Pages\EditPage;
@@ -45,7 +46,7 @@ class AdminPanelTest extends TestCase
             '/admin', '/admin/pages', '/admin/articles', '/admin/articles/create',
             "/admin/articles/{$article->id}/edit", '/admin/categories', '/admin/ventures',
             '/admin/ventures/create', '/admin/contact-messages', "/admin/contact-messages/{$message->id}",
-            '/admin/users', '/admin/manage-site-settings',
+            '/admin/users', '/admin/manage-site-settings', '/admin/appearance',
         ];
         foreach (Page::all() as $page) {
             $urls[] = "/admin/pages/{$page->id}/edit";
@@ -99,5 +100,45 @@ class AdminPanelTest extends TestCase
             ->assertHasNoFormErrors();
 
         $this->assertSame('https://www.linkedin.com/in/example', SiteSetting::current()->linkedin_url);
+    }
+
+    public function test_hero_text_is_optional(): void
+    {
+        $home = Page::query()->where('key', 'home')->first();
+
+        Livewire::test(EditPage::class, ['record' => $home->getRouteKey()])
+            ->fillForm(['content.heroIntro' => null, 'content.heroQuestion' => null, 'content.heroGreeting' => null])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertNull($home->fresh()->content['heroQuestion']);
+    }
+
+    public function test_appearance_saves_colours_fonts_and_css(): void
+    {
+        Livewire::test(ManageAppearance::class)
+            ->fillForm([
+                'theme.light.button' => '#112233',
+                'theme.serifFont' => 'fraunces',
+                'theme.darkMode' => 'off',
+                'custom_css' => 'body { letter-spacing: 0; }',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->getJson('/api/site')
+            ->assertJsonPath('theme.light.button', '#112233')
+            ->assertJsonPath('theme.light.background', '#f3f4f8')
+            ->assertJsonPath('theme.serifFont', 'fraunces')
+            ->assertJsonPath('theme.darkMode', 'off')
+            ->assertJsonPath('customCss', 'body { letter-spacing: 0; }');
+    }
+
+    public function test_appearance_rejects_invalid_colours(): void
+    {
+        Livewire::test(ManageAppearance::class)
+            ->fillForm(['theme.light.text' => 'red; } body { display:none'])
+            ->call('save')
+            ->assertHasFormErrors(['theme.light.text']);
     }
 }

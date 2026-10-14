@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Pages\Schemas;
 
 use App\Models\Page;
+use App\Support\HomeHeroDefaults;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -13,6 +15,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class PageForm
@@ -68,9 +71,14 @@ class PageForm
         return match ($key) {
             'home' => [
                 Section::make('Hero')
-                    ->description('Reads as one sentence: greeting + name and the intro on the left, the question on the right. The photo is the portrait in Site settings — a cut-out PNG with a transparent background looks best.')
+                    ->description('Reads as one sentence: greeting + name and the intro on the left, the question on the right. Any text left empty is simply not shown.')
                     ->columns(2)
                     ->schema([
+                        FileUpload::make('content.heroImage')
+                            ->label('Hero image')
+                            ->image()->imageEditor()->disk('public')->directory('pages')
+                            ->helperText('The photo in the centre frame. A cut-out PNG with a transparent background looks best. Empty uses the portrait from Site settings.')
+                            ->columnSpanFull(),
                         TagsInput::make('content.heroKeywords')
                             ->label('Words across the top')
                             ->helperText('Up to three, e.g. Leadership, Strategy, Vision.')
@@ -78,19 +86,46 @@ class PageForm
                             ->columnSpanFull(),
                         TextInput::make('content.heroGreeting')
                             ->label('Greeting before the name')
-                            ->required()->maxLength(40)
+                            ->maxLength(40)
                             ->helperText('The full name from Site settings follows it.'),
                         TextInput::make('content.heroHandle')
                             ->label('Badge text')
                             ->maxLength(40)
                             ->helperText('Shown beside the small photo, e.g. a social handle. Empty shows the job title.'),
-                        Textarea::make('content.heroIntro')->label('Intro (left)')->rows(2)->required()->maxLength(140),
-                        Textarea::make('content.heroQuestion')->label('Question (right)')->rows(2)->required()->maxLength(80),
-                        TextInput::make('content.heroMonogram')->label('Monogram')->required()->maxLength(3),
-                        TextInput::make('content.heroSignature')->label('Signature name')->required()->maxLength(40),
+                        Textarea::make('content.heroIntro')->label('Intro (left)')->rows(2)->maxLength(140),
+                        Textarea::make('content.heroQuestion')->label('Question (right)')->rows(2)->maxLength(80),
+                        TextInput::make('content.heroMonogram')
+                            ->label('Monogram')
+                            ->maxLength(3)
+                            ->helperText('Empty uses the initials of the full name.'),
+                        TextInput::make('content.heroSignature')
+                            ->label('Signature name')
+                            ->maxLength(40)
+                            ->helperText('Empty hides the signature.'),
                         TextInput::make('content.heroSignatureNote')->label('Signature second line')->maxLength(40),
-                        TextInput::make('content.primaryCtaLabel')->label('Main button (goes to Ventures)')->required(),
-                        TextInput::make('content.secondaryCtaLabel')->label('Second button (goes to About)')->required(),
+                        TextInput::make('content.primaryCtaLabel')
+                            ->label('Main button (goes to Ventures)')
+                            ->maxLength(40)
+                            ->helperText('Empty hides the button.'),
+                        TextInput::make('content.secondaryCtaLabel')
+                            ->label('Second button (goes to About)')
+                            ->maxLength(40)
+                            ->helperText('Empty hides the button.'),
+                    ]),
+                Section::make('Page layout')
+                    ->description('Sections below the hero. Drag to reorder; switch off to hide.')
+                    ->collapsible()
+                    ->schema([
+                        Repeater::make('content.sections')
+                            ->hiddenLabel()
+                            ->schema([
+                                Hidden::make('key'),
+                                Toggle::make('visible')->label(fn (Get $get) => HomeHeroDefaults::SECTION_LABELS[$get('key')] ?? $get('key')),
+                            ])
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable()
+                            ->default(HomeHeroDefaults::SECTIONS),
                     ]),
                 Section::make("What I'm working on")->schema([
                     TextInput::make('content.focusHeading')->label('Heading')->required(),

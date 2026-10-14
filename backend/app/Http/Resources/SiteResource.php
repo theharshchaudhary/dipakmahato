@@ -33,6 +33,11 @@ class SiteResource extends JsonResource
                 'google' => $this->google_site_verification,
                 'bing' => $this->bing_site_verification,
             ],
+            'theme' => $this->resolvedTheme(),
+            'logo' => Media::url($this->logo_path),
+            'favicon' => Media::url($this->favicon_path),
+            'footerNote' => $this->footer_note,
+            'customCss' => $this->custom_css,
             'nav' => Page::query()
                 ->where('show_in_nav', true)
                 ->where('key', '!=', 'home')

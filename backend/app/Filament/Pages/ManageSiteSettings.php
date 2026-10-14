@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\SiteSetting;
 use BackedEnum;
+use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
@@ -22,11 +23,13 @@ class ManageSiteSettings extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
+    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+
     protected static ?string $navigationLabel = 'Site settings';
 
     protected static ?string $title = 'Site settings';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 1;
 
     public ?array $data = [];
 

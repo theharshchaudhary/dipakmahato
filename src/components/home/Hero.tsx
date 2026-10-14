@@ -83,7 +83,7 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
           </div>
 
           {/* Centre: the photo in a thin frame, standing on the grid. */}
-          <div className="relative mx-auto flex w-full max-w-sm items-end lg:max-w-none">
+          <div className="relative mx-auto flex w-full max-w-sm items-end pt-12 lg:max-w-none lg:pt-0">
             <div
               aria-hidden
               style={delay(150)}

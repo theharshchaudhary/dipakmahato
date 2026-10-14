@@ -51,6 +51,10 @@ class VentureForm
                         TextInput::make('sort')->label('Order')->numeric()->default(0),
                     ]),
                     Section::make('Images')->schema([
+                        FileUpload::make('logo_path')
+                            ->label('Logo')
+                            ->image()->disk('public')->directory('ventures')
+                            ->helperText('Square, at least 200 × 200. Shown in the frame until a brand image is added.'),
                         FileUpload::make('cover_image_path')
                             ->label('Brand image')
                             ->image()->imageEditor()->disk('public')->directory('ventures'),

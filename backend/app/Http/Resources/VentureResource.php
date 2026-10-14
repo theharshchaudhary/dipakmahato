@@ -21,6 +21,7 @@ class VentureResource extends JsonResource
             'product' => $this->product,
             'milestones' => array_values($this->milestones ?? []),
             'website' => $this->website_url,
+            'logo' => Media::url($this->logo_path),
             'coverImage' => Media::url($this->cover_image_path),
             'screenshots' => array_values(array_filter(array_map(Media::url(...), $this->screenshots ?? []))),
             'primary' => $this->is_primary,

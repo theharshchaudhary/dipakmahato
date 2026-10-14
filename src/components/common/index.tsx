@@ -267,11 +267,14 @@ export function FramedVisual({
   src,
   alt,
   fallback,
+  logo,
   ratio = "aspect-[4/3]",
   className,
 }: {
   src: string | null;
   alt: string;
+  /** Shown at its own size in the empty panel, in place of the fallback text. */
+  logo?: string | null;
   /** Text set large and faint in the empty panel. */
   fallback: string;
   ratio?: string;
@@ -293,7 +296,16 @@ export function FramedVisual({
         </div>
       ) : (
         <div aria-hidden className={cn(ratio, "hero-grid grid place-items-center bg-surface/60")}>
-          <span className="display-question px-6 text-center text-ink/15">{fallback}</span>
+          {logo ? (
+            <img
+              src={logo}
+              alt={fallback}
+              loading="lazy"
+              className="h-28 w-28 rounded-[22%] shadow-[0_18px_40px_-18px_rgb(0_0_0/0.35)] transition-transform duration-500 ease-out group-hover/frame:-translate-y-1 sm:h-36 sm:w-36"
+            />
+          ) : (
+            <span className="display-question px-6 text-center text-ink/15">{fallback}</span>
+          )}
         </div>
       )}
     </Frame>

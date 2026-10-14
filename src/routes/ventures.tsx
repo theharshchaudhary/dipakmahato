@@ -36,7 +36,7 @@ export const Route = createFileRoute("/ventures")({
           name: v.name,
           description: v.tagline,
           url: v.website ?? undefined,
-          logo: v.coverImage ?? undefined,
+          logo: v.logo ?? v.coverImage ?? undefined,
           founder: { "@id": `${site.siteUrl}/#person` },
         })),
         breadcrumbSchema(site, [
@@ -93,6 +93,7 @@ function VentureFeature({ v, site }: { v: Venture; site: Site }) {
           src={v.coverImage}
           alt={`${v.name} brand image`}
           fallback={v.name}
+          logo={v.logo}
           ratio="aspect-[16/11]"
           className="lg:col-span-6 lg:col-start-7"
         />

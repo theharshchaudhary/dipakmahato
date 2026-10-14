@@ -128,6 +128,7 @@ function Home() {
               src={spotlight.coverImage}
               alt={`${spotlight.name} brand image`}
               fallback={spotlight.name}
+              logo={spotlight.logo}
               className="lg:col-span-6 lg:col-start-7"
             />
           </div>

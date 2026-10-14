@@ -181,6 +181,7 @@ export interface Venture {
   product: string | null;
   milestones: string[];
   website: string | null;
+  logo: string | null;
   coverImage: string | null;
   screenshots: string[];
   primary: boolean;

@@ -139,12 +139,15 @@ class ContentSeeder extends Seeder
     {
         return [
             ...HomeHeroDefaults::CONTENT,
-            'heroKeywords' => [],
+            // Reads across the hero as one sentence, from the greeting to the question.
+            'heroKeywords' => ['Founder', 'Fair delivery', 'Kathmandu'],
             'heroHandle' => '@dipak_mahato01',
             'heroGreeting' => "Hi, I'm",
-            'heroIntro' => 'CEO & co-founder of Zedfo Now Pvt. Ltd.',
-            'heroQuestion' => null,
-            'primaryCtaLabel' => "See what I'm building",
+            'heroIntro' => "CEO & co-founder of Zedfo, where food costs the same as on the restaurant's menu.",
+            'heroQuestion' => "Isn't it time delivery played fair?",
+            'heroSignature' => 'Dipak K. Mahato',
+            'heroSignatureNote' => 'Kathmandu, Nepal',
+            'primaryCtaLabel' => 'Explore Zedfo',
             'secondaryCtaLabel' => 'About me',
             'focusHeading' => "What I'm working on",
             'focusItems' => [

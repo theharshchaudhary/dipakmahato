@@ -95,7 +95,7 @@ class ContentApiTest extends TestCase
     public function test_cached_responses_refresh_when_content_changes(): void
     {
         $this->getJson('/api/pages/home')
-            ->assertJsonPath('content.heroQuestion', null);
+            ->assertJsonPath('content.heroQuestion', "Isn't it time delivery played fair?");
 
         $page = Page::query()->where('key', 'home')->first();
         $page->update(['content' => [...$page->content, 'heroQuestion' => 'New question']]);

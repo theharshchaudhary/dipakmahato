@@ -8,6 +8,7 @@ import {
   ToneBar,
 } from "@/components/common";
 import { ArticleList } from "@/components/articles";
+import { Hero } from "@/components/home/Hero";
 import { fetchArticles, fetchVentures, getPage } from "@/lib/api";
 import { profileLabel } from "@/lib/profiles";
 import { buildHead } from "@/lib/seo";
@@ -58,45 +59,10 @@ function Home() {
 
   return (
     <>
-      <section className="pb-20 pt-12 sm:pb-28 sm:pt-20">
-        <Container className="grid gap-12 md:grid-cols-12 md:items-end">
-          <div className={site.portrait ? "md:col-span-8" : "md:col-span-10"}>
-            {/* The name is the h1 so the page plainly answers a search for it. */}
-            <h1 className="ui font-semibold">
-              {site.fullName}
-              <span className="ml-3 font-normal text-ink-soft">
-                {site.jobTitle}
-                {site.organization && ` of ${site.organization.name}`}
-              </span>
-            </h1>
-            <p className="display-hero mt-6">{c.heroHeadline}</p>
-            <p className="mt-8 max-w-xl text-xl leading-relaxed text-ink-soft sm:text-[1.375rem]">
-              {c.heroLead}
-            </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <ButtonLink to="/ventures">{c.primaryCtaLabel}</ButtonLink>
-              <ButtonLink to="/about" variant="outline">
-                {c.secondaryCtaLabel}
-              </ButtonLink>
-            </div>
-          </div>
-          {site.portrait && (
-            <div className="md:col-span-4">
-              <img
-                src={site.portrait}
-                alt={`Portrait of ${site.fullName}`}
-                width={800}
-                height={1000}
-                fetchPriority="high"
-                className="aspect-[4/3] w-full object-cover md:aspect-[4/5]"
-              />
-            </div>
-          )}
-        </Container>
-      </section>
+      <Hero site={site} content={c} />
 
       {c.focusItems.length > 0 && (
-        <section className="pb-16 sm:pb-24">
+        <section className="py-16 sm:py-24">
           <Container>
             <h2 className="display-lg">{c.focusHeading}</h2>
             <ul className="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">

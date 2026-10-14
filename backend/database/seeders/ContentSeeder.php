@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Page;
 use App\Models\SiteSetting;
 use App\Models\Venture;
+use App\Support\HomeHeroDefaults;
 use Illuminate\Database\Seeder;
 
 /**
@@ -47,8 +48,7 @@ class ContentSeeder extends Seeder
                 'meta_title' => 'Dipak Kumar Mahato — Entrepreneur, CEO of Zedfo',
                 'meta_description' => 'Dipak Kumar Mahato (Dipak Mahato) is an entrepreneur and CEO of Zedfo, building businesses in Nepal and writing about business, technology and execution.',
                 'content' => [
-                    'heroHeadline' => 'Building useful businesses in Nepal.',
-                    'heroLead' => "As CEO of Zedfo, I'm working to make everyday commerce more convenient. I start from real problems, make careful decisions, and write down what I learn.",
+                    ...HomeHeroDefaults::CONTENT,
                     'primaryCtaLabel' => "See what I'm building",
                     'secondaryCtaLabel' => 'About me',
                     'focusHeading' => "What I'm working on",

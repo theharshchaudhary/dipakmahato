@@ -67,12 +67,31 @@ class PageForm
     {
         return match ($key) {
             'home' => [
-                Section::make('Hero')->schema([
-                    TextInput::make('content.heroHeadline')->label('Headline')->required()->maxLength(90),
-                    Textarea::make('content.heroLead')->label('Introduction')->rows(3)->required(),
-                    TextInput::make('content.primaryCtaLabel')->label('Main button (goes to Ventures)')->required(),
-                    TextInput::make('content.secondaryCtaLabel')->label('Second button (goes to About)')->required(),
-                ]),
+                Section::make('Hero')
+                    ->description('Reads as one sentence: greeting + name and the intro on the left, the question on the right. The photo is the portrait in Site settings — a cut-out PNG with a transparent background looks best.')
+                    ->columns(2)
+                    ->schema([
+                        TagsInput::make('content.heroKeywords')
+                            ->label('Words across the top')
+                            ->helperText('Up to three, e.g. Leadership, Strategy, Vision.')
+                            ->rules(['max:3'])
+                            ->columnSpanFull(),
+                        TextInput::make('content.heroGreeting')
+                            ->label('Greeting before the name')
+                            ->required()->maxLength(40)
+                            ->helperText('The full name from Site settings follows it.'),
+                        TextInput::make('content.heroHandle')
+                            ->label('Badge text')
+                            ->maxLength(40)
+                            ->helperText('Shown beside the small photo, e.g. a social handle. Empty shows the job title.'),
+                        Textarea::make('content.heroIntro')->label('Intro (left)')->rows(2)->required()->maxLength(140),
+                        Textarea::make('content.heroQuestion')->label('Question (right)')->rows(2)->required()->maxLength(80),
+                        TextInput::make('content.heroMonogram')->label('Monogram')->required()->maxLength(3),
+                        TextInput::make('content.heroSignature')->label('Signature name')->required()->maxLength(40),
+                        TextInput::make('content.heroSignatureNote')->label('Signature second line')->maxLength(40),
+                        TextInput::make('content.primaryCtaLabel')->label('Main button (goes to Ventures)')->required(),
+                        TextInput::make('content.secondaryCtaLabel')->label('Second button (goes to About)')->required(),
+                    ]),
                 Section::make("What I'm working on")->schema([
                     TextInput::make('content.focusHeading')->label('Heading')->required(),
                     Repeater::make('content.focusItems')

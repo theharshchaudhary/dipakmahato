@@ -135,13 +135,34 @@
   line-height: 1.15;
 }
 
-@utility display-hero {
+/* Home hero: the closing question, set large in the serif. */
+@utility display-question {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 3.9vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+/* Home hero: fine drafting grid behind the lower half of the section. */
+@utility hero-grid {
+  background-image:
+    linear-gradient(to bottom, var(--color-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--color-line) 1px, transparent 1px);
+  background-size:
+    100% 7.5rem,
+    4.5rem 100%;
+  background-position:
+    0 0,
+    center 0;
+}
+
+@utility monogram {
   font-family: var(--font-display);
-  font-weight: 650;
-  font-stretch: 100%;
-  font-size: clamp(2.75rem, 7.2vw, 6rem);
-  line-height: 0.98;
-  letter-spacing: -0.022em;
+  font-weight: 800;
+  letter-spacing: -0.12em;
+  line-height: 0.8;
 }
 
 @utility link {

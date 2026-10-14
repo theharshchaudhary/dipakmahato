@@ -95,12 +95,12 @@ class ContentApiTest extends TestCase
     public function test_cached_responses_refresh_when_content_changes(): void
     {
         $this->getJson('/api/pages/home')
-            ->assertJsonPath('content.heroHeadline', 'Building useful businesses in Nepal.');
+            ->assertJsonPath('content.heroQuestion', "are you ready for what's next?");
 
         $page = Page::query()->where('key', 'home')->first();
-        $page->update(['content' => [...$page->content, 'heroHeadline' => 'New headline']]);
+        $page->update(['content' => [...$page->content, 'heroQuestion' => 'New question']]);
 
-        $this->getJson('/api/pages/home')->assertJsonPath('content.heroHeadline', 'New headline');
+        $this->getJson('/api/pages/home')->assertJsonPath('content.heroQuestion', 'New question');
     }
 
     public function test_contact_form_stores_message(): void

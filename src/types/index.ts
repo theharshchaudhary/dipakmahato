@@ -44,8 +44,14 @@ export interface Cta {
 }
 
 export interface HomeContent extends Cta {
-  heroHeadline: string;
-  heroLead: string;
+  heroKeywords: string[];
+  heroHandle?: string | null;
+  heroGreeting: string;
+  heroIntro: string;
+  heroQuestion: string;
+  heroMonogram: string;
+  heroSignature: string;
+  heroSignatureNote?: string | null;
   primaryCtaLabel: string;
   secondaryCtaLabel: string;
   focusHeading: string;

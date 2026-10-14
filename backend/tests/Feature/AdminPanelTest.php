@@ -63,12 +63,12 @@ class AdminPanelTest extends TestCase
         $home = Page::query()->where('key', 'home')->first();
 
         Livewire::test(EditPage::class, ['record' => $home->getRouteKey()])
-            ->fillForm(['content.heroHeadline' => 'Edited from the admin'])
+            ->fillForm(['content.heroQuestion' => 'Edited from the admin'])
             ->call('save')
             ->assertHasNoFormErrors();
 
         $content = $home->fresh()->content;
-        $this->assertSame('Edited from the admin', $content['heroHeadline']);
+        $this->assertSame('Edited from the admin', $content['heroQuestion']);
         $this->assertSame("What I'm working on", $content['focusHeading']);
         $this->assertCount(3, $content['focusItems']);
     }

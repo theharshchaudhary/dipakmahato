@@ -78,6 +78,8 @@ export type HomeSectionKey = "focus" | "writing" | "venture" | "cta";
 
 export interface HomeContent extends Cta {
   heroImage?: string | null;
+  /** How much the photo's background fades into the page. */
+  heroBlend?: "none" | "soft" | "strong" | null;
   heroKeywords?: string[] | null;
   heroHandle?: string | null;
   heroGreeting?: string | null;

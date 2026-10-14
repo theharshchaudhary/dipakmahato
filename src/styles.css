@@ -203,6 +203,30 @@
     center 0;
 }
 
+/*
+ * Hero photo blending: an oval fade anchored at the bottom centre plus soft
+ * side edges, so the
+ * photo's studio background dissolves into the page around the person while
+ * they (centre, bottom) stay solid.
+ */
+@utility photo-blend-soft {
+  --blend-arch: radial-gradient(ellipse 86% 104% at 50% 100%, #000 60%, transparent 100%);
+  --blend-sides: linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-image: var(--blend-arch), var(--blend-sides);
+  mask-image: var(--blend-arch), var(--blend-sides);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+@utility photo-blend-strong {
+  --blend-arch: radial-gradient(ellipse 70% 90% at 50% 100%, #000 48%, transparent 100%);
+  --blend-sides: linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  -webkit-mask-image: var(--blend-arch), var(--blend-sides);
+  mask-image: var(--blend-arch), var(--blend-sides);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
 @utility monogram {
   font-family: var(--font-display);
   font-weight: 800;

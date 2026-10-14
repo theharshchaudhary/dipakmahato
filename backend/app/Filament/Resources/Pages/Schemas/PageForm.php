@@ -12,6 +12,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -78,6 +79,13 @@ class PageForm
                             ->label('Hero image')
                             ->image()->imageEditor()->disk('public')->directory('pages')
                             ->helperText('The photo in the centre frame. A cut-out PNG with a transparent background looks best. Empty uses the portrait from Site settings.')
+                            ->columnSpanFull(),
+                        ToggleButtons::make('content.heroBlend')
+                            ->label('Blend the photo into the page')
+                            ->options(['none' => 'None', 'soft' => 'Soft', 'strong' => 'Strong'])
+                            ->default('soft')
+                            ->inline()
+                            ->helperText('Fades the top and sides of the photo so its background melts into the page. Use None for cut-out photos.')
                             ->columnSpanFull(),
                         TagsInput::make('content.heroKeywords')
                             ->label('Words across the top')

@@ -15,9 +15,6 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
   const monogram = c.heroMonogram || initials(site.fullName);
   const image = c.heroImage || site.portrait;
   const hasRight = Boolean(c.heroQuestion || c.heroSignature);
-  const blend = { none: "", soft: "photo-blend-soft", strong: "photo-blend-strong" }[
-    c.heroBlend ?? "soft"
-  ];
 
   return (
     <section className="relative overflow-hidden border-b border-line">
@@ -100,10 +97,7 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
                 height={1000}
                 fetchPriority="high"
                 style={delay(350)}
-                className={cn(
-                  "animate-rise relative z-10 mx-auto max-h-[36rem] w-[88%] object-contain object-bottom",
-                  blend,
-                )}
+                className="animate-rise relative z-10 mx-auto max-h-[36rem] w-[88%] object-contain object-bottom"
               />
             ) : (
               // No photo uploaded yet: keep the composition with a large monogram.

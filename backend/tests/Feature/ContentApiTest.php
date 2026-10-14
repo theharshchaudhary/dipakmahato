@@ -32,7 +32,7 @@ class ContentApiTest extends TestCase
         $this->getJson('/api/site')
             ->assertOk()
             ->assertJsonPath('fullName', 'Dipak Kumar Mahato')
-            ->assertJsonPath('alternateNames', ['Dipak Mahato'])
+            ->assertJsonPath('alternateNames', ['Dipak Mahato', 'Dipak K. Mahato'])
             ->assertJsonCount(4, 'nav')
             ->assertJsonPath('nav.0.path', '/about');
     }
@@ -49,31 +49,31 @@ class ContentApiTest extends TestCase
     public function test_drafts_are_hidden_until_published(): void
     {
         $this->getJson('/api/articles')->assertOk()->assertJsonCount(0, 'articles');
-        $this->getJson('/api/articles/learning-through-execution')->assertNotFound();
+        $this->getJson('/api/articles/same-menu-price')->assertNotFound();
 
-        $this->publish('learning-through-execution');
+        $this->publish('same-menu-price');
 
         $this->getJson('/api/articles')->assertJsonCount(1, 'articles');
-        $this->getJson('/api/articles/learning-through-execution')
+        $this->getJson('/api/articles/same-menu-price')
             ->assertOk()
-            ->assertJsonPath('article.toc.0', ['id' => 'the-context', 'heading' => 'The context'])
-            ->assertJsonPath('article.seo.title', 'Learning Through Execution');
+            ->assertJsonPath('article.toc.0', ['id' => 'the-hidden-gap', 'heading' => 'The hidden gap'])
+            ->assertJsonPath('article.seo.title', "Same Menu Price: Why Zedfo Doesn't Mark Up Your Food");
     }
 
     public function test_scheduled_articles_stay_hidden_until_their_date(): void
     {
-        $this->publish('learning-through-execution', ['published_at' => now()->addDay()]);
+        $this->publish('same-menu-price', ['published_at' => now()->addDay()]);
 
-        $this->getJson('/api/articles/learning-through-execution')->assertNotFound();
+        $this->getJson('/api/articles/same-menu-price')->assertNotFound();
     }
 
     public function test_article_body_is_sanitised(): void
     {
-        $this->publish('learning-through-execution', [
+        $this->publish('same-menu-price', [
             'body' => '<h2>Hi</h2><p onclick="x()">Text</p><script>alert(1)</script>',
         ]);
 
-        $html = $this->getJson('/api/articles/learning-through-execution')->json('article.html');
+        $html = $this->getJson('/api/articles/same-menu-price')->json('article.html');
 
         $this->assertStringNotContainsString('<script', $html);
         $this->assertStringNotContainsString('onclick', $html);
@@ -82,12 +82,12 @@ class ContentApiTest extends TestCase
 
     public function test_sitemap_lists_pages_and_published_articles_only(): void
     {
-        $this->publish('learning-through-execution');
+        $this->publish('same-menu-price');
 
         $paths = collect($this->getJson('/api/sitemap')->assertOk()->json())->pluck('path');
 
         $this->assertEqualsCanonicalizing(
-            ['/', '/about', '/writing', '/ventures', '/contact', '/writing/learning-through-execution'],
+            ['/', '/about', '/writing', '/ventures', '/contact', '/writing/same-menu-price'],
             $paths->all(),
         );
     }
@@ -95,7 +95,7 @@ class ContentApiTest extends TestCase
     public function test_cached_responses_refresh_when_content_changes(): void
     {
         $this->getJson('/api/pages/home')
-            ->assertJsonPath('content.heroQuestion', "are you ready for what's next?");
+            ->assertJsonPath('content.heroQuestion', null);
 
         $page = Page::query()->where('key', 'home')->first();
         $page->update(['content' => [...$page->content, 'heroQuestion' => 'New question']]);

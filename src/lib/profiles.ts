@@ -8,6 +8,7 @@ const knownProfiles: Record<string, string> = {
   "youtube.com": "YouTube",
   "medium.com": "Medium",
   "crunchbase.com": "Crunchbase",
+  "tiktok.com": "TikTok",
 };
 
 /** "https://www.linkedin.com/in/x" -> "LinkedIn"; unknown sites show their domain. */

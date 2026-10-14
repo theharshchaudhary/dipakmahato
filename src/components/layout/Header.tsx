@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { pageTone, useSite } from "@/lib/site";
+import { Monogram } from "@/components/common";
 import { toneBg } from "@/lib/tone";
 import { cn } from "@/lib/utils";
 
@@ -28,9 +29,10 @@ export function Header() {
         <Link
           to="/"
           onClick={() => setOpen(false)}
-          className="font-display text-xl font-semibold tracking-tight"
+          className="flex items-center gap-2.5 font-display text-lg font-semibold tracking-tight"
         >
-          {site.shortName}
+          <Monogram name={site.fullName} className="text-2xl" />
+          <span>{site.shortName}</span>
         </Link>
 
         <nav aria-label="Primary" className="hidden md:block">
@@ -39,18 +41,26 @@ export function Header() {
               <li key={item.key}>
                 <Link
                   to={item.path}
-                  className="ui group relative block px-3 py-2 text-ink-soft transition-colors hover:text-ink"
+                  className="ui group relative flex items-center gap-2 px-3 py-2 text-ink-soft transition-colors hover:text-ink"
                   activeProps={{ className: "!text-ink font-semibold", "aria-current": "page" }}
                 >
                   {({ isActive }) => (
                     <>
+                      {/* The section colour shows as a dot, as in labels across the site. */}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "h-1.5 w-1.5 rounded-full transition-transform duration-200",
+                          toneBg[pageTone[item.key]],
+                          isActive ? "scale-100" : "scale-0 group-hover:scale-100",
+                        )}
+                      />
                       {item.label}
                       <span
                         aria-hidden
                         className={cn(
-                          "absolute inset-x-3 -bottom-[13px] h-1 origin-left transition-transform duration-300",
-                          toneBg[pageTone[item.key]],
-                          isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                          "absolute inset-x-3 -bottom-[13px] h-px origin-left bg-ink transition-transform duration-300",
+                          isActive ? "scale-x-100" : "scale-x-0",
                         )}
                       />
                     </>

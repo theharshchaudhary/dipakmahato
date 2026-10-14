@@ -29,3 +29,12 @@ export const pagePath: Record<PageKey, "/" | "/about" | "/writing" | "/ventures"
   ventures: "/ventures",
   contact: "/contact",
 };
+
+/** Default name of each section, used in labels. */
+export const pageLabel: Record<PageKey, string> = {
+  home: "Home",
+  about: "About",
+  writing: "Writing",
+  ventures: "Ventures",
+  contact: "Contact",
+};

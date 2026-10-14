@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Container, DraftNote, ToneBar } from "@/components/common";
+import { Container, DraftNote, Label, PageHeader } from "@/components/common";
 import { ArticleFeature, ArticleList } from "@/components/articles";
 import { fetchArticles, getPage } from "@/lib/api";
 import { breadcrumbSchema, buildHead } from "@/lib/seo";
@@ -69,110 +69,117 @@ function Writing() {
   const list = showFeatured ? filtered.filter((a) => a.slug !== featured?.slug) : filtered;
 
   return (
-    <Container className="pb-24 pt-12 md:pt-20">
-      <header className="max-w-3xl">
-        <ToneBar tone="crimson" className="mb-6" />
-        <h1 className="display-xl">{c.heading}</h1>
-        {c.lead && <p className="mt-6 text-2xl leading-snug text-ink-soft">{c.lead}</p>}
+    <>
+      <PageHeader
+        label="Writing"
+        tone="crimson"
+        title={c.heading}
+        lead={c.lead}
+        meta={
+          articles.length > 0 && `${articles.length} ${articles.length === 1 ? "essay" : "essays"}`
+        }
+      >
         {c.note && <DraftNote>{c.note}</DraftNote>}
-      </header>
+      </PageHeader>
+      <Container className="pb-24 pt-16 sm:pb-28">
+        {articles.length === 0 ? (
+          <div className="border-y border-ink/15 py-20">
+            <Label tone="crimson">Coming soon</Label>
+            <p className="lead-serif mt-5 max-w-xl">{c.emptyMessage}</p>
+          </div>
+        ) : (
+          <>
+            {showFeatured && featured && (
+              <section aria-label="Featured essay" className="mb-16">
+                <ArticleFeature article={featured} />
+              </section>
+            )}
 
-      {articles.length === 0 ? (
-        <p className="display-md mt-14 border-t-2 border-ink/10 py-16 text-ink-soft">
-          {c.emptyMessage}
-        </p>
-      ) : (
-        <>
-          {showFeatured && featured && (
-            <section aria-label="Featured essay" className="mt-14">
-              <ArticleFeature article={featured} />
-            </section>
-          )}
-
-          <div className="mt-14 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            {categories.length > 1 ? (
-              <div role="group" aria-label="Filter by topic" className="flex flex-wrap gap-2">
-                {[{ name: "All", slug: "all" }, ...categories].map((topic) => (
-                  <button
-                    key={topic.slug}
-                    type="button"
-                    aria-pressed={cat === topic.slug}
-                    onClick={() => {
-                      setCat(topic.slug);
+            <div className="flex flex-col gap-5 border-t border-ink/15 pt-5 lg:flex-row lg:items-center lg:justify-between">
+              {categories.length > 1 ? (
+                <div role="group" aria-label="Filter by topic" className="flex flex-wrap gap-2">
+                  {[{ name: "All", slug: "all" }, ...categories].map((topic) => (
+                    <button
+                      key={topic.slug}
+                      type="button"
+                      aria-pressed={cat === topic.slug}
+                      onClick={() => {
+                        setCat(topic.slug);
+                        setVisible(PAGE);
+                      }}
+                      className={cn(
+                        "ui rounded-full px-3.5 py-1.5 text-sm ring-1 transition-colors",
+                        cat === topic.slug
+                          ? "bg-ink font-semibold text-paper ring-ink"
+                          : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-ink",
+                      )}
+                    >
+                      {topic.name}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <span />
+              )}
+              {articles.length > PAGE && (
+                <label className="relative block w-full lg:w-72">
+                  <span className="sr-only">Search essays</span>
+                  <Search
+                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft"
+                    aria-hidden
+                  />
+                  <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => {
+                      setQuery(e.target.value);
                       setVisible(PAGE);
                     }}
-                    className={cn(
-                      "ui px-3.5 py-2 transition-colors",
-                      cat === topic.slug
-                        ? "bg-crimson font-semibold text-white"
-                        : "bg-surface text-ink-soft ring-1 ring-line hover:text-ink hover:ring-ink",
-                    )}
-                  >
-                    {topic.name}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <span />
-            )}
-            {articles.length > PAGE && (
-              <label className="relative block w-full lg:w-72">
-                <span className="sr-only">Search essays</span>
-                <Search
-                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft"
-                  aria-hidden
-                />
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(e) => {
-                    setQuery(e.target.value);
-                    setVisible(PAGE);
-                  }}
-                  placeholder="Search essays"
-                  className="ui w-full bg-surface py-2.5 pl-9 pr-3 outline-none ring-1 ring-line placeholder:text-ink-soft focus:ring-2 focus:ring-ink"
-                />
-              </label>
-            )}
-          </div>
-
-          <div className="mt-8">
-            {list.length === 0 && !showFeatured ? (
-              <div className="border-t-2 border-ink/10 py-16">
-                <p className="display-md">No essays match that.</p>
-                <p className="mt-2 text-ink-soft">
-                  Try another word, or{" "}
-                  <button
-                    type="button"
-                    className="link text-ink"
-                    onClick={() => {
-                      setQuery("");
-                      setCat("all");
-                    }}
-                  >
-                    show all essays
-                  </button>
-                  .
-                </p>
-              </div>
-            ) : (
-              list.length > 0 && <ArticleList articles={list.slice(0, visible)} />
-            )}
-          </div>
-
-          {list.length > visible && (
-            <div className="mt-10">
-              <button
-                type="button"
-                onClick={() => setVisible((v) => v + PAGE)}
-                className="ui border-2 border-ink px-5 py-3 font-semibold hover:bg-ink hover:text-paper"
-              >
-                Show more essays
-              </button>
+                    placeholder="Search essays"
+                    className="ui w-full rounded-full bg-surface py-2 pl-9 pr-4 text-sm outline-none ring-1 ring-line placeholder:text-ink-soft focus:ring-2 focus:ring-ink"
+                  />
+                </label>
+              )}
             </div>
-          )}
-        </>
-      )}
-    </Container>
+
+            <div className="mt-8">
+              {list.length === 0 && !showFeatured ? (
+                <div className="border-t border-ink/15 py-16">
+                  <p className="display-md">No essays match that.</p>
+                  <p className="mt-2 font-serif text-lg text-ink-soft">
+                    Try another word, or{" "}
+                    <button
+                      type="button"
+                      className="link text-ink"
+                      onClick={() => {
+                        setQuery("");
+                        setCat("all");
+                      }}
+                    >
+                      show all essays
+                    </button>
+                    .
+                  </p>
+                </div>
+              ) : (
+                list.length > 0 && <ArticleList articles={list.slice(0, visible)} />
+              )}
+            </div>
+
+            {list.length > visible && (
+              <div className="mt-10">
+                <button
+                  type="button"
+                  onClick={() => setVisible((v) => v + PAGE)}
+                  className="ui border border-ink px-5 py-3 font-semibold transition-colors hover:bg-ink hover:text-paper"
+                >
+                  Show more essays
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </Container>
+    </>
   );
 }

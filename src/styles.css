@@ -23,7 +23,7 @@
   --marigold: #f2a900;
   --marigold-ink: #141a33;
   /* Fixed dark surface (footer) that stays dark in both themes. */
-  --night: #141a33;
+  --night: #000000;
   --night-ink: #f3f4f8;
   color-scheme: light;
 }
@@ -31,7 +31,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --paper: #0e1224;
-    --night: #080b18;
+    --night: #000000;
     --surface: #161b33;
     --ink: #e8eaf2;
     --ink-soft: #9ba2bc;
@@ -112,30 +112,57 @@
   letter-spacing: 0.005em;
 }
 
+/*
+ * Editorial system (set by the home hero):
+ *   label         small uppercase tracked text for section names and meta
+ *   display-*     bold grotesk for statements: names, titles, headings
+ *   lead-serif /  the serif "voice" for leads, subtitles, questions, CTAs
+ *   display-question
+ *   hero-grid     fine drafting grid used as a backdrop
+ */
+@utility label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 @utility display-xl {
   font-family: var(--font-display);
-  font-weight: 650;
-  font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 5.4vw, 4.25rem);
   line-height: 1;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.025em;
 }
 
 @utility display-lg {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(2rem, 4.2vw, 3.25rem);
-  line-height: 1;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  font-size: clamp(1.875rem, 3.6vw, 2.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
 }
 
 @utility display-md {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
-  line-height: 1.15;
+  font-weight: 650;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
-/* Home hero: the closing question, set large in the serif. */
+@utility lead-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+}
+
+/* The closing question in the hero and calls to action, set large in the serif. */
 @utility display-question {
   font-family: var(--font-serif);
   font-weight: 400;
@@ -145,7 +172,7 @@
   text-wrap: balance;
 }
 
-/* Home hero: fine drafting grid behind the lower half of the section. */
+/* Fine drafting grid, used behind the hero, page headers and calls to action. */
 @utility hero-grid {
   background-image:
     linear-gradient(to bottom, var(--color-line) 1px, transparent 1px),

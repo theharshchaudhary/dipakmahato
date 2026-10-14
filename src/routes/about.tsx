@@ -1,5 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Container, CtaSection, DraftNote, TextLink, ToneBar } from "@/components/common";
+import {
+  Container,
+  CtaSection,
+  DraftNote,
+  Frame,
+  PageHeader,
+  Pill,
+  TextLink,
+} from "@/components/common";
 import { getPage } from "@/lib/api";
 import { breadcrumbSchema, buildHead } from "@/lib/seo";
 import { siteFromMatches, useSite } from "@/lib/site";
@@ -36,62 +44,77 @@ export const Route = createFileRoute("/about")({
 function About() {
   const site = useSite();
   const { content: c } = Route.useLoaderData();
+  const facts = [
+    { label: "Role", value: site.jobTitle },
+    { label: "Company", value: site.organization?.name },
+    { label: "Based in", value: site.location },
+  ].filter((f): f is { label: string; value: string } => Boolean(f.value));
 
   return (
     <>
-      <Container className="grid gap-12 pb-16 pt-12 md:grid-cols-12 md:pt-20">
-        <div className={site.portrait ? "md:col-span-7" : "md:col-span-9"}>
-          <ToneBar tone="ink" className="mb-6" />
-          <h1 className="display-xl">{site.fullName}</h1>
-          <p className="ui mt-4 text-lg font-semibold text-sign-text">
-            {site.jobTitle}
-            {site.organization && ` of ${site.organization.name}`}
-            {site.location && `, ${site.location}`}
-          </p>
-          <p className="mt-8 max-w-xl text-2xl leading-snug">{c.lead}</p>
-          {c.note && <DraftNote>{c.note}</DraftNote>}
-        </div>
-        {site.portrait && (
-          <div className="md:col-span-4 md:col-start-9">
-            <img
-              src={site.portrait}
-              alt={`Portrait of ${site.fullName}`}
-              width={800}
-              height={1000}
-              className="aspect-[4/3] w-full object-cover md:aspect-[4/5]"
-            />
-          </div>
-        )}
-      </Container>
+      <PageHeader label="About" title={site.fullName} lead={c.lead}>
+        {c.note && <DraftNote>{c.note}</DraftNote>}
+      </PageHeader>
 
-      <Container className="pb-20 sm:pb-28">
-        <dl className="border-t-2 border-ink">
-          {c.sections.map((s) => (
-            <div key={s.title} className="grid gap-3 border-b border-line py-9 md:grid-cols-12">
-              <dt className="display-md md:col-span-4">{s.title}</dt>
-              <dd className="max-w-2xl whitespace-pre-line text-ink-soft md:col-span-7 md:col-start-6">
-                {s.body}
-              </dd>
-            </div>
-          ))}
-          {c.interests.length > 0 && (
-            <div className="grid gap-4 border-b border-line py-9 md:grid-cols-12">
-              <dt className="display-md md:col-span-4">{c.interestsHeading}</dt>
-              <dd className="md:col-span-7 md:col-start-6">
-                <ul className="flex flex-wrap gap-2">
-                  {c.interests.map((i) => (
-                    <li key={i} className="ui bg-surface px-3 py-1.5 ring-1 ring-line">
-                      {i}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </div>
-          )}
-        </dl>
-        <div className="mt-10 flex flex-wrap gap-8">
-          <TextLink to="/ventures">See the ventures</TextLink>
-          <TextLink to="/writing">Read the writing</TextLink>
+      <Container className="grid gap-14 py-20 sm:py-28 lg:grid-cols-12">
+        <aside className="lg:col-span-4">
+          <div className="space-y-10 lg:sticky lg:top-24">
+            {site.portrait && (
+              <Frame>
+                <img
+                  src={site.portrait}
+                  alt={`Portrait of ${site.fullName}`}
+                  width={800}
+                  height={1000}
+                  className="mx-auto aspect-[4/5] w-full object-cover object-top"
+                />
+              </Frame>
+            )}
+            {facts.length > 0 && (
+              <dl className="border-t border-ink/15">
+                {facts.map((f) => (
+                  <div
+                    key={f.label}
+                    className="flex justify-between gap-6 border-b border-ink/15 py-3.5"
+                  >
+                    <dt className="label text-ink-soft">{f.label}</dt>
+                    <dd className="ui text-right font-semibold">{f.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
+        </aside>
+
+        <div className="lg:col-span-7 lg:col-start-6">
+          <dl>
+            {c.sections.map((s) => (
+              <div key={s.title} className="border-t border-ink/15 pb-10 pt-5">
+                <dt className="display-md">{s.title}</dt>
+                <dd className="mt-4 whitespace-pre-line font-serif text-lg leading-relaxed text-ink-soft">
+                  {s.body}
+                </dd>
+              </div>
+            ))}
+            {c.interests.length > 0 && (
+              <div className="border-t border-ink/15 pb-10 pt-5">
+                <dt className="display-md">{c.interestsHeading}</dt>
+                <dd className="mt-5">
+                  <ul className="flex flex-wrap gap-2">
+                    {c.interests.map((i) => (
+                      <li key={i}>
+                        <Pill>{i}</Pill>
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )}
+          </dl>
+          <div className="flex flex-wrap gap-8 border-t border-ink/15 pt-6">
+            <TextLink to="/ventures">See the ventures</TextLink>
+            <TextLink to="/writing">Read the writing</TextLink>
+          </div>
         </div>
       </Container>
 

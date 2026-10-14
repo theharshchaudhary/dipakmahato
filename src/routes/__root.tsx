@@ -10,16 +10,16 @@ import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { fetchSite } from "@/lib/api";
-import { ButtonLink, Container, ToneBar } from "@/components/common";
+import { ButtonLink, Container, Label } from "@/components/common";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
 function NotFoundComponent() {
   return (
     <Container className="py-28 sm:py-40">
-      <ToneBar tone="crimson" className="mb-6" />
-      <h1 className="display-xl">This page doesn't exist.</h1>
-      <p className="mt-5 max-w-lg text-ink-soft">
+      <Label tone="crimson">Error 404</Label>
+      <h1 className="display-xl mt-8">This page doesn't exist.</h1>
+      <p className="lead-serif mt-5 max-w-lg text-ink-soft">
         The link may be old, or the page has moved. Start again from the home page.
       </p>
       <div className="mt-10">
@@ -35,9 +35,9 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
   return (
     <Container className="py-28 sm:py-40">
-      <ToneBar tone="crimson" className="mb-6" />
-      <h1 className="display-xl">This page didn't load.</h1>
-      <p className="mt-5 max-w-lg text-ink-soft">
+      <Label tone="crimson">Something went wrong</Label>
+      <h1 className="display-xl mt-8">This page didn't load.</h1>
+      <p className="lead-serif mt-5 max-w-lg text-ink-soft">
         Something failed while loading it. Reload to try again, or go back to the home page.
       </p>
       <div className="mt-10 flex flex-wrap gap-3">

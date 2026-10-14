@@ -4,15 +4,16 @@ import {
   Container,
   CtaSection,
   SectionHeading,
+  FramedVisual,
+  Label,
   TextLink,
-  ToneBar,
 } from "@/components/common";
 import { ArticleList } from "@/components/articles";
 import { Hero } from "@/components/home/Hero";
 import { fetchArticles, fetchVentures, getPage } from "@/lib/api";
 import { profileLabel } from "@/lib/profiles";
 import { buildHead } from "@/lib/seo";
-import { pagePath, siteFromMatches, useSite } from "@/lib/site";
+import { pageLabel, pagePath, siteFromMatches, useSite } from "@/lib/site";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -62,16 +63,19 @@ function Home() {
       <Hero site={site} content={c} />
 
       {c.focusItems.length > 0 && (
-        <section className="py-16 sm:py-24">
+        <section className="py-20 sm:py-28">
           <Container>
-            <h2 className="display-lg">{c.focusHeading}</h2>
-            <ul className="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
+            <SectionHeading label="Now" title={c.focusHeading} />
+            <ul className="grid border-y border-ink/15 md:grid-cols-3 md:divide-x md:divide-ink/15">
               {c.focusItems.map((f) => (
-                <li key={f.title} className="flex flex-col">
-                  <ToneBar tone={f.tone} className="mb-5 w-full" />
-                  <h3 className="display-md">{f.title}</h3>
-                  <p className="mt-3 text-ink-soft">{f.body}</p>
-                  <div className="mt-5">
+                <li
+                  key={f.title}
+                  className="flex flex-col border-t border-ink/15 py-8 first:border-t-0 md:border-t-0 md:px-8 md:first:pl-0 md:last:pr-0"
+                >
+                  <Label tone={f.tone}>{pageLabel[f.page]}</Label>
+                  <h3 className="display-md mt-6">{f.title}</h3>
+                  <p className="mt-3 font-serif text-lg leading-relaxed text-ink-soft">{f.body}</p>
+                  <div className="mt-auto pt-6">
                     <TextLink to={pagePath[f.page]}>{f.ctaLabel}</TextLink>
                   </div>
                 </li>
@@ -82,9 +86,10 @@ function Home() {
       )}
 
       {recent.length > 0 && (
-        <section className="bg-surface py-16 sm:py-24">
+        <section className="pb-20 sm:pb-28">
           <Container>
             <SectionHeading
+              label="Writing"
               tone="crimson"
               title={c.writingHeading}
               action={<TextLink to="/writing">All writing</TextLink>}
@@ -95,28 +100,31 @@ function Home() {
       )}
 
       {spotlight && (
-        <section className="py-16 sm:py-24">
-          <Container className="grid gap-10 md:grid-cols-12 md:items-center">
-            {spotlight.coverImage && (
-              <div className="md:col-span-6">
-                <img
-                  src={spotlight.coverImage}
-                  alt={`${spotlight.name} brand image`}
-                  loading="lazy"
-                  className="aspect-[4/3] w-full object-cover"
-                />
+        <section className="pb-20 sm:pb-28">
+          <Container>
+            <SectionHeading
+              label={spotlight.primary ? "Current venture" : "Venture"}
+              tone="sign"
+              title={spotlight.name}
+            />
+            <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+              <div className="lg:col-span-5">
+                <p className="lead-serif">{spotlight.tagline}</p>
+                {c.spotlightBody && (
+                  <p className="mt-5 font-serif text-lg leading-relaxed text-ink-soft">
+                    {c.spotlightBody}
+                  </p>
+                )}
+                <div className="mt-8">
+                  <ButtonLink to="/ventures">{c.spotlightCtaLabel || "Read more"}</ButtonLink>
+                </div>
               </div>
-            )}
-            <div
-              className={spotlight.coverImage ? "md:col-span-5 md:col-start-8" : "md:col-span-8"}
-            >
-              <ToneBar tone="sign" className="mb-5" />
-              <h2 className="display-xl text-sign-text">{spotlight.name}</h2>
-              <p className="mt-4 text-2xl leading-snug">{spotlight.tagline}</p>
-              {c.spotlightBody && <p className="mt-5 text-ink-soft">{c.spotlightBody}</p>}
-              <div className="mt-8">
-                <ButtonLink to="/ventures">{c.spotlightCtaLabel || "Read more"}</ButtonLink>
-              </div>
+              <FramedVisual
+                src={spotlight.coverImage}
+                alt={`${spotlight.name} brand image`}
+                fallback={spotlight.name}
+                className="lg:col-span-6 lg:col-start-7"
+              />
             </div>
           </Container>
         </section>

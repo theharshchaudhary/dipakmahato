@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { Container, ToneBar } from "@/components/common";
+import { Container, Frame, Label, PageHeader, Pill } from "@/components/common";
 import { getPage, sendContactMessage, type ContactInput } from "@/lib/api";
 import { profileLabel } from "@/lib/profiles";
 import { breadcrumbSchema, buildHead } from "@/lib/seo";
@@ -98,22 +98,22 @@ function Contact() {
       onChange: (ev: { target: { value: string } }) =>
         setFields((f) => ({ ...f, [key]: ev.target.value })),
       className: cn(
-        "mt-2 w-full bg-surface px-4 py-3 text-ink outline-none ring-1 transition-shadow focus:ring-2",
-        err ? "ring-2 ring-crimson" : "ring-line focus:ring-ink",
+        "ui mt-2 w-full border-b bg-transparent py-3 text-lg text-ink outline-none transition-colors placeholder:text-ink-soft/60",
+        err ? "border-crimson" : "border-ink/30 focus:border-ink",
       ),
     };
     return (
       <div>
-        <label htmlFor={`f-${key}`} className="ui font-semibold">
+        <label htmlFor={`f-${key}`} className="label text-ink-soft">
           {label}
         </label>
         {textarea ? (
-          <textarea rows={6} {...common} />
+          <textarea rows={5} {...common} className={cn(common.className, "resize-y")} />
         ) : (
           <input type={type} autoComplete={key === "subject" ? "off" : key} {...common} />
         )}
         {err && (
-          <p id={`e-${key}`} className="ui mt-2 text-crimson">
+          <p id={`e-${key}`} className="ui mt-2 text-sm text-crimson">
             {err}
           </p>
         )}
@@ -122,84 +122,99 @@ function Contact() {
   };
 
   return (
-    <Container className="pb-24 pt-12 md:pt-20">
-      <div className="grid gap-16 lg:grid-cols-12">
-        <div className="lg:col-span-5">
-          <ToneBar tone="marigold" className="mb-6" />
-          <h1 className="display-xl">{c.heading}</h1>
-          {c.lead && <p className="mt-6 text-2xl leading-snug text-ink-soft">{c.lead}</p>}
-          <ul className="ui mt-8 space-y-2 text-lg">
-            <li>
-              <a href={`mailto:${site.email}`} className="link font-semibold">
-                {site.email}
+    <>
+      <PageHeader label="Contact" tone="marigold" title={c.heading} lead={c.lead}>
+        <ul className="mt-10 flex flex-wrap gap-2">
+          <li>
+            <a href={`mailto:${site.email}`} className="hover:[&>span]:ring-ink">
+              <Pill>{site.email}</Pill>
+            </a>
+          </li>
+          {site.sameAs.map((url) => (
+            <li key={url}>
+              <a
+                href={url}
+                target="_blank"
+                rel="me noopener noreferrer"
+                className="hover:[&>span]:ring-ink"
+              >
+                <Pill>{profileLabel(url)}</Pill>
               </a>
             </li>
-            {site.sameAs.map((url) => (
-              <li key={url}>
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="me noopener noreferrer"
-                  className="link font-semibold"
-                >
-                  {profileLabel(url)}
-                </a>
-              </li>
-            ))}
-          </ul>
-          {c.inquiries.length > 0 && (
-            <dl className="mt-12 border-t-2 border-ink">
+          ))}
+        </ul>
+      </PageHeader>
+
+      <Container className="grid gap-16 py-20 sm:py-28 lg:grid-cols-12">
+        {c.inquiries.length > 0 && (
+          <div className="lg:col-span-5">
+            <Label>What to write about</Label>
+            <dl className="mt-6 border-b border-ink/15">
               {c.inquiries.map((i) => (
-                <div key={i.title} className="border-b border-line py-5">
+                <div key={i.title} className="border-t border-ink/15 py-6">
                   <dt className="display-md">{i.title}</dt>
-                  <dd className="mt-1 text-ink-soft">{i.body}</dd>
+                  <dd className="mt-2 font-serif text-lg leading-relaxed text-ink-soft">
+                    {i.body}
+                  </dd>
                 </div>
               ))}
             </dl>
-          )}
-        </div>
+          </div>
+        )}
 
-        <form
-          noValidate
-          onSubmit={onSubmit}
-          aria-label="Contact form"
-          className="space-y-6 self-start bg-surface p-6 ring-1 ring-line sm:p-10 lg:col-span-6 lg:col-start-7"
-        >
-          {field("name", "Your name")}
-          {field("email", "Your email", "email")}
-          {field("subject", "Subject")}
-          {field("message", "Message", "text", true)}
-          {/* Honeypot: hidden from people and screen readers; bots tend to fill it. */}
-          <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-            <label htmlFor="f-website">Leave this empty</label>
-            <input
-              id="f-website"
-              name="website"
-              tabIndex={-1}
-              autoComplete="off"
-              value={fields.website}
-              onChange={(ev) => setFields((f) => ({ ...f, website: ev.target.value }))}
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={status.kind === "sending"}
-            className="ui bg-marigold px-6 py-3.5 font-semibold text-marigold-ink transition-colors hover:bg-ink hover:text-paper disabled:opacity-60"
+        <Frame className="self-start lg:col-span-6 lg:col-start-7">
+          <form
+            noValidate
+            onSubmit={onSubmit}
+            aria-label="Contact form"
+            className="space-y-8 pb-8 pt-4 sm:px-4"
           >
-            {status.kind === "sending" ? "Sending…" : "Send message"}
-          </button>
-          <div aria-live="polite">
-            {status.kind === "sent" && (
-              <p className="ui border-l-4 border-marigold bg-paper p-4 text-ink">
-                {c.successMessage}
-              </p>
-            )}
-            {status.kind === "failed" && (
-              <p className="ui border-l-4 border-crimson bg-paper p-4 text-ink">{status.message}</p>
-            )}
-          </div>
-        </form>
-      </div>
-    </Container>
+            {field("name", "Your name")}
+            {field("email", "Your email", "email")}
+            {field("subject", "Subject")}
+            {field("message", "Message", "text", true)}
+            {/* Honeypot: hidden from people and screen readers; bots tend to fill it. */}
+            <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label htmlFor="f-website">Leave this empty</label>
+              <input
+                id="f-website"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={fields.website}
+                onChange={(ev) => setFields((f) => ({ ...f, website: ev.target.value }))}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={status.kind === "sending"}
+              className="ui bg-ink px-6 py-3.5 font-semibold text-paper transition-colors hover:bg-sign disabled:opacity-60"
+            >
+              {status.kind === "sending" ? "Sending…" : "Send message"}
+            </button>
+            <div aria-live="polite">
+              {status.kind === "sent" && (
+                <p className="ui inline-flex items-start gap-2.5 rounded-2xl bg-marigold/15 px-4 py-3 text-ink">
+                  <span
+                    aria-hidden
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-marigold"
+                  />
+                  {c.successMessage}
+                </p>
+              )}
+              {status.kind === "failed" && (
+                <p className="ui inline-flex items-start gap-2.5 rounded-2xl bg-crimson/10 px-4 py-3 text-ink">
+                  <span
+                    aria-hidden
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson"
+                  />
+                  {status.message}
+                </p>
+              )}
+            </div>
+          </form>
+        </Frame>
+      </Container>
+    </>
   );
 }

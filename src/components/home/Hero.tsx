@@ -1,4 +1,4 @@
-import { ButtonLink, Container } from "@/components/common";
+import { ButtonLink, Container, PersonChip } from "@/components/common";
 import { cn } from "@/lib/utils";
 import type { HomeContent, Site } from "@/types";
 
@@ -30,10 +30,9 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
         <div className="grid gap-10 pt-10 lg:min-h-[38rem] lg:grid-cols-[1fr_minmax(0,25rem)_1fr] lg:gap-8 lg:pt-6">
           {/* Left: who, then the first half of the sentence. */}
           <div className="flex flex-col justify-center lg:pb-40">
-            <p className="ui inline-flex w-fit items-center gap-2.5 rounded-full bg-surface py-1 pl-1 pr-4 ring-1 ring-line">
-              <Avatar site={site} monogram={c.heroMonogram} />
-              <span>{c.heroHandle || role}</span>
-            </p>
+            <PersonChip name={site.fullName} portrait={site.portrait}>
+              {c.heroHandle || role}
+            </PersonChip>
             {/* The name is the h1 so the page plainly answers a search for it. */}
             <h1 className="mt-5 font-display text-[2.375rem] font-bold leading-[1.02] tracking-[-0.02em] sm:text-5xl lg:text-[2.75rem] xl:text-5xl">
               {c.heroGreeting} {site.fullName},
@@ -63,28 +62,6 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
         </div>
       </Container>
     </section>
-  );
-}
-
-function Avatar({ site, monogram }: { site: Site; monogram: string }) {
-  if (site.portrait) {
-    return (
-      <img
-        src={site.portrait}
-        alt=""
-        width={32}
-        height={32}
-        className="h-8 w-8 rounded-full bg-paper object-cover object-top ring-1 ring-line"
-      />
-    );
-  }
-  return (
-    <span
-      aria-hidden
-      className="monogram grid h-8 w-8 place-items-center rounded-full bg-ink text-xs text-paper"
-    >
-      {monogram}
-    </span>
   );
 }
 

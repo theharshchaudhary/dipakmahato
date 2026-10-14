@@ -1,11 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
-import { Container, CtaSection, DraftNote, ToneBar } from "@/components/common";
+import {
+  Container,
+  CtaSection,
+  DraftNote,
+  Frame,
+  FramedVisual,
+  Label,
+  PageHeader,
+  PersonChip,
+} from "@/components/common";
 import { fetchVentures, getPage } from "@/lib/api";
 import { breadcrumbSchema, buildHead } from "@/lib/seo";
-import { siteFromMatches } from "@/lib/site";
-import type { Venture } from "@/types";
+import { siteFromMatches, useSite } from "@/lib/site";
+import type { Site, Venture } from "@/types";
 
 export const Route = createFileRoute("/ventures")({
   loader: async () => {
@@ -42,59 +51,70 @@ export const Route = createFileRoute("/ventures")({
 
 function Detail({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="grid gap-3 border-b border-line py-9 md:grid-cols-12">
-      <dt className="display-md md:col-span-4">{label}</dt>
-      <dd className="max-w-2xl text-ink-soft md:col-span-7 md:col-start-6">{children}</dd>
+    <div className="grid gap-3 border-t border-ink/15 py-7 md:grid-cols-12 md:gap-8">
+      <dt className="label pt-1.5 text-ink-soft md:col-span-3">{label}</dt>
+      <dd className="max-w-2xl font-serif text-lg leading-relaxed text-ink md:col-span-9">
+        {children}
+      </dd>
     </div>
   );
 }
 
-function VentureFeature({ v }: { v: Venture }) {
+function VentureFeature({ v, site }: { v: Venture; site: Site }) {
   return (
-    <section aria-labelledby={`v-${v.slug}`} className="mt-16">
-      <div className="bg-sign text-sign-ink">
-        <div className="grid gap-8 p-6 sm:p-12 md:grid-cols-12 md:items-end">
-          <div className={v.coverImage ? "md:col-span-6" : "md:col-span-9"}>
-            <p className="ui font-semibold text-marigold">
-              {v.primary ? "Current venture" : "Venture"}
-            </p>
-            <h2
-              id={`v-${v.slug}`}
-              className="mt-3 font-display text-6xl font-semibold leading-none tracking-tight sm:text-8xl"
-            >
-              {v.name}
-            </h2>
-            <p className="mt-5 max-w-md text-2xl leading-snug">{v.tagline}</p>
-          </div>
-          {v.coverImage && (
-            <div className="md:col-span-6">
-              <img
-                src={v.coverImage}
-                alt={`${v.name} brand image`}
-                className="aspect-[16/10] w-full object-cover"
-              />
-            </div>
-          )}
-        </div>
+    <section aria-labelledby={`v-${v.slug}`} className="pt-16 first:pt-0 sm:pt-24">
+      <div className="flex items-center justify-between gap-6 border-t border-ink/15 pt-5">
+        <Label tone="sign">{v.primary ? "Current venture" : "Venture"}</Label>
+        {v.website && (
+          <a
+            href={v.website}
+            target="_blank"
+            rel="noopener"
+            className="label inline-flex items-center gap-1.5 text-ink hover:underline"
+          >
+            Visit site <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+          </a>
+        )}
       </div>
 
-      <dl className="border-t-2 border-ink">
+      <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-center">
+        <div className="lg:col-span-5">
+          <h2 id={`v-${v.slug}`} className="display-xl">
+            {v.name}
+          </h2>
+          <p className="lead-serif mt-6 text-ink-soft">{v.tagline}</p>
+          <div className="mt-8">
+            <PersonChip name={site.fullName} portrait={site.portrait}>
+              {v.role}
+            </PersonChip>
+          </div>
+        </div>
+        <FramedVisual
+          src={v.coverImage}
+          alt={`${v.name} brand image`}
+          fallback={v.name}
+          ratio="aspect-[16/11]"
+          className="lg:col-span-6 lg:col-start-7"
+        />
+      </div>
+
+      <dl className="mt-16 border-b border-ink/15">
         <Detail label="The company">{v.description}</Detail>
-        <Detail label="My role">{v.role}</Detail>
         {v.problem && <Detail label="The problem">{v.problem}</Detail>}
         {(v.product || v.screenshots.length > 0) && (
           <Detail label="The product">
             {v.product && <p>{v.product}</p>}
             {v.screenshots.length > 0 && (
-              <div className="mt-6 grid max-w-md grid-cols-2 gap-4">
+              <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3">
                 {v.screenshots.map((src, i) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt={`${v.name} screenshot ${i + 1}`}
-                    loading="lazy"
-                    className="aspect-[9/16] w-full object-cover ring-1 ring-line"
-                  />
+                  <Frame key={src}>
+                    <img
+                      src={src}
+                      alt={`${v.name} screenshot ${i + 1}`}
+                      loading="lazy"
+                      className="aspect-[9/16] w-full object-cover"
+                    />
+                  </Frame>
                 ))}
               </div>
             )}
@@ -102,23 +122,13 @@ function VentureFeature({ v }: { v: Venture }) {
         )}
         {v.milestones.length > 0 && (
           <Detail label="Milestones">
-            <ul className="list-disc space-y-1 pl-5">
+            <ul className="divide-y divide-ink/10">
               {v.milestones.map((m) => (
-                <li key={m}>{m}</li>
+                <li key={m} className="py-2 first:pt-0 last:pb-0">
+                  {m}
+                </li>
               ))}
             </ul>
-          </Detail>
-        )}
-        {v.website && (
-          <Detail label="Website">
-            <a
-              href={v.website}
-              target="_blank"
-              rel="noopener"
-              className="ui link inline-flex items-center gap-2 font-semibold text-sign-text"
-            >
-              Visit {v.name} <ExternalLink className="h-4 w-4" aria-hidden />
-            </a>
           </Detail>
         )}
       </dl>
@@ -127,19 +137,23 @@ function VentureFeature({ v }: { v: Venture }) {
 }
 
 function Ventures() {
+  const site = useSite();
   const { page, ventures } = Route.useLoaderData();
   const c = page.content;
   return (
     <>
-      <Container className="pb-20 pt-12 md:pt-20">
-        <header className="max-w-3xl">
-          <ToneBar tone="sign" className="mb-6" />
-          <h1 className="display-xl">{c.heading}</h1>
-          {c.lead && <p className="mt-6 text-2xl leading-snug text-ink-soft">{c.lead}</p>}
-          {c.note && <DraftNote>{c.note}</DraftNote>}
-        </header>
+      <PageHeader
+        label="Ventures"
+        tone="sign"
+        title={c.heading}
+        lead={c.lead}
+        meta={ventures.length > 1 && `${ventures.length} ventures`}
+      >
+        {c.note && <DraftNote>{c.note}</DraftNote>}
+      </PageHeader>
+      <Container className="py-16 sm:py-24">
         {ventures.map((v) => (
-          <VentureFeature key={v.slug} v={v} />
+          <VentureFeature key={v.slug} v={v} site={site} />
         ))}
       </Container>
       <CtaSection title={c.ctaTitle} body={c.ctaBody} cta={c.ctaLabel} />

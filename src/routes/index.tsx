@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Fragment, type ReactNode } from "react";
 import {
   ButtonLink,
   Container,
@@ -14,6 +15,7 @@ import { fetchArticles, fetchVentures, getPage } from "@/lib/api";
 import { profileLabel } from "@/lib/profiles";
 import { buildHead } from "@/lib/seo";
 import { pageLabel, pagePath, siteFromMatches, useSite } from "@/lib/site";
+import type { HomeSectionKey } from "@/types";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -53,83 +55,86 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+const defaultSections: { key: HomeSectionKey; visible: boolean }[] = [
+  { key: "focus", visible: true },
+  { key: "writing", visible: true },
+  { key: "venture", visible: true },
+  { key: "cta", visible: true },
+];
+
 function Home() {
   const site = useSite();
   const { page, recent, spotlight } = Route.useLoaderData();
   const c = page.content;
 
-  return (
-    <>
-      <Hero site={site} content={c} />
-
-      {c.focusItems.length > 0 && (
-        <section className="py-20 sm:py-28">
-          <Container>
-            <SectionHeading label="Now" title={c.focusHeading} />
-            <ul className="grid border-y border-ink/15 md:grid-cols-3 md:divide-x md:divide-ink/15">
-              {c.focusItems.map((f) => (
-                <li
-                  key={f.title}
-                  className="flex flex-col border-t border-ink/15 py-8 first:border-t-0 md:border-t-0 md:px-8 md:first:pl-0 md:last:pr-0"
-                >
-                  <Label tone={f.tone}>{pageLabel[f.page]}</Label>
-                  <h3 className="display-md mt-6">{f.title}</h3>
-                  <p className="mt-3 font-serif text-lg leading-relaxed text-ink-soft">{f.body}</p>
-                  <div className="mt-auto pt-6">
-                    <TextLink to={pagePath[f.page]}>{f.ctaLabel}</TextLink>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-      )}
-
-      {recent.length > 0 && (
-        <section className="pb-20 sm:pb-28">
-          <Container>
-            <SectionHeading
-              label="Writing"
-              tone="crimson"
-              title={c.writingHeading}
-              action={<TextLink to="/writing">All writing</TextLink>}
-            />
-            <ArticleList articles={recent} />
-          </Container>
-        </section>
-      )}
-
-      {spotlight && (
-        <section className="pb-20 sm:pb-28">
-          <Container>
-            <SectionHeading
-              label={spotlight.primary ? "Current venture" : "Venture"}
-              tone="sign"
-              title={spotlight.name}
-            />
-            <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
-              <div className="lg:col-span-5">
-                <p className="lead-serif">{spotlight.tagline}</p>
-                {c.spotlightBody && (
-                  <p className="mt-5 font-serif text-lg leading-relaxed text-ink-soft">
-                    {c.spotlightBody}
-                  </p>
-                )}
-                <div className="mt-8">
-                  <ButtonLink to="/ventures">{c.spotlightCtaLabel || "Read more"}</ButtonLink>
+  // Sections below the hero, keyed for the order and visibility chosen in the admin.
+  const sections: Record<HomeSectionKey, ReactNode> = {
+    focus: c.focusItems.length > 0 && (
+      <section className="py-10 sm:py-14">
+        <Container>
+          <SectionHeading label="Now" title={c.focusHeading} />
+          <ul className="grid border-y border-ink/15 md:grid-cols-3 md:divide-x md:divide-ink/15">
+            {c.focusItems.map((f) => (
+              <li
+                key={f.title}
+                className="flex flex-col border-t border-ink/15 py-8 first:border-t-0 md:border-t-0 md:px-8 md:first:pl-0 md:last:pr-0"
+              >
+                <Label tone={f.tone}>{pageLabel[f.page]}</Label>
+                <h3 className="display-md mt-6">{f.title}</h3>
+                <p className="mt-3 font-serif text-lg leading-relaxed text-ink-soft">{f.body}</p>
+                <div className="mt-auto pt-6">
+                  <TextLink to={pagePath[f.page]}>{f.ctaLabel}</TextLink>
                 </div>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+    ),
+    writing: recent.length > 0 && (
+      <section className="py-10 sm:py-14">
+        <Container>
+          <SectionHeading
+            label="Writing"
+            tone="crimson"
+            title={c.writingHeading}
+            action={<TextLink to="/writing">All writing</TextLink>}
+          />
+          <ArticleList articles={recent} />
+        </Container>
+      </section>
+    ),
+    venture: spotlight && (
+      <section className="py-10 sm:py-14">
+        <Container>
+          <SectionHeading
+            label={spotlight.primary ? "Current venture" : "Venture"}
+            tone="sign"
+            title={spotlight.name}
+          />
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-5">
+              <p className="lead-serif">{spotlight.tagline}</p>
+              {c.spotlightBody && (
+                <p className="mt-5 font-serif text-lg leading-relaxed text-ink-soft">
+                  {c.spotlightBody}
+                </p>
+              )}
+              <div className="mt-8">
+                <ButtonLink to="/ventures">{c.spotlightCtaLabel || "Read more"}</ButtonLink>
               </div>
-              <FramedVisual
-                src={spotlight.coverImage}
-                alt={`${spotlight.name} brand image`}
-                fallback={spotlight.name}
-                className="lg:col-span-6 lg:col-start-7"
-              />
             </div>
-          </Container>
-        </section>
-      )}
-
+            <FramedVisual
+              src={spotlight.coverImage}
+              alt={`${spotlight.name} brand image`}
+              fallback={spotlight.name}
+              className="lg:col-span-6 lg:col-start-7"
+            />
+          </div>
+        </Container>
+      </section>
+    ),
+    cta: (
       <CtaSection title={c.ctaTitle} body={c.ctaBody} cta={c.ctaLabel}>
         <a href={`mailto:${site.email}`} className="ui link font-medium">
           {site.email}
@@ -146,6 +151,20 @@ function Home() {
           </a>
         ))}
       </CtaSection>
+    ),
+  };
+  const order = c.sections?.length ? c.sections : defaultSections;
+
+  return (
+    <>
+      <Hero site={site} content={c} />
+      <div className="py-10 sm:py-14">
+        {order
+          .filter((s) => s.visible && s.key in sections)
+          .map((s) => (
+            <Fragment key={s.key}>{sections[s.key]}</Fragment>
+          ))}
+      </div>
     </>
   );
 }

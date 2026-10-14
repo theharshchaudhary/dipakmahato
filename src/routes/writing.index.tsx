@@ -110,7 +110,7 @@ function Writing() {
                       className={cn(
                         "ui rounded-full px-3.5 py-1.5 text-sm ring-1 transition-colors",
                         cat === topic.slug
-                          ? "bg-ink font-semibold text-paper ring-ink"
+                          ? "bg-primary font-semibold text-primary-ink ring-primary"
                           : "bg-surface text-ink-soft ring-line hover:text-ink hover:ring-ink",
                       )}
                     >
@@ -171,7 +171,7 @@ function Writing() {
                 <button
                   type="button"
                   onClick={() => setVisible((v) => v + PAGE)}
-                  className="ui border border-ink px-5 py-3 font-semibold transition-colors hover:bg-ink hover:text-paper"
+                  className="ui rounded-button border border-primary px-5 py-3 font-semibold transition-colors hover:bg-primary hover:text-primary-ink"
                 >
                   Show more essays
                 </button>

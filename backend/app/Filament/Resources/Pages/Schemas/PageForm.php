@@ -225,7 +225,7 @@ class PageForm
     private static function ctaSection(): Section
     {
         return Section::make('Closing call to action')
-            ->description('The marigold band at the bottom of the page. The button goes to Contact.')
+            ->description('The large question at the bottom of the page. The button goes to Contact.')
             ->schema([
                 TextInput::make('content.ctaTitle')->label('Title')->required(),
                 Textarea::make('content.ctaBody')->label('Text')->rows(2),

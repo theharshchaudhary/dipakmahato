@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Dashboard;
 use App\Models\SiteSetting;
 use App\Support\Media;
-use App\Support\ThemeDefaults;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -42,8 +41,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn () => Media::url(self::settings()?->logo_path))
             ->brandLogoHeight('2rem')
             ->favicon(fn () => Media::url(self::settings()?->favicon_path) ?? asset('favicon.svg'))
-            ->colors(fn () => [
-                'primary' => Color::hex(self::settings()?->resolvedTheme()['light']['ventures'] ?? ThemeDefaults::THEME['light']['ventures']),
+            // A fixed palette keeps admin buttons readable whatever colours the site uses.
+            ->colors([
+                'primary' => Color::Blue,
                 'gray' => Color::Slate,
             ])
             ->navigationGroups([

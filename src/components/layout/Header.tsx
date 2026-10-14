@@ -31,8 +31,14 @@ export function Header() {
           onClick={() => setOpen(false)}
           className="flex items-center gap-2.5 font-display text-lg font-semibold tracking-tight"
         >
-          <Monogram name={site.fullName} className="text-2xl" />
-          <span>{site.shortName}</span>
+          {site.logo ? (
+            <img src={site.logo} alt={site.shortName} className="h-8 w-auto" />
+          ) : (
+            <>
+              <Monogram name={site.fullName} className="text-2xl" />
+              <span>{site.shortName}</span>
+            </>
+          )}
         </Link>
 
         <nav aria-label="Primary" className="hidden md:block">

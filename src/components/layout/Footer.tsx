@@ -51,6 +51,9 @@ export function Footer() {
         <div className="mt-16 flex items-end justify-between gap-6 border-t border-night-ink/15 pt-6">
           <p className="label text-night-ink/50">
             © {new Date().getFullYear()} {site.fullName}
+            {site.footerNote && (
+              <span className="ml-4 normal-case tracking-normal">{site.footerNote}</span>
+            )}
           </p>
           <Monogram name={site.fullName} className="text-4xl text-night-ink" />
         </div>

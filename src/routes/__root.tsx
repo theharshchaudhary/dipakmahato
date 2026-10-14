@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { fetchSite } from "@/lib/api";
+import { themeBackground, themeCss } from "@/lib/theme";
 import { ButtonLink, Container, Label } from "@/components/common";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -47,7 +48,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             router.invalidate();
             reset();
           }}
-          className="ui bg-ink px-5 py-3 font-semibold text-paper transition-colors hover:bg-sign"
+          className="ui px-5 py-3 font-semibold transition rounded-button bg-primary text-primary-ink hover:opacity-90"
         >
           Reload page
         </button>
@@ -68,8 +69,16 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#f3f4f8", media: "(prefers-color-scheme: light)" },
-      { name: "theme-color", content: "#0e1224", media: "(prefers-color-scheme: dark)" },
+      {
+        name: "theme-color",
+        content: themeBackground(site?.theme, "light"),
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        name: "theme-color",
+        content: themeBackground(site?.theme, "dark"),
+        media: "(prefers-color-scheme: dark)",
+      },
       ...(site
         ? [
             { name: "author", content: site.fullName },
@@ -84,10 +93,16 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      ...(site?.favicon
+        ? [{ rel: "icon", href: site.favicon }]
+        : [
+            { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+            { rel: "icon", href: "/favicon.ico", sizes: "any" },
+          ]),
       { rel: "sitemap", type: "application/xml", href: "/sitemap.xml" },
     ],
+    // Colours, fonts and custom CSS from the admin's Appearance screen, after the stylesheet.
+    styles: site ? [{ children: themeCss(site.theme, site.customCss) }] : [],
   }),
   shellComponent: RootShell,
   component: RootComponent,

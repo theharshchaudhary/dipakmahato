@@ -147,8 +147,8 @@ export function ButtonLink({
       className={cn(
         "ui inline-flex items-center justify-center px-5 py-3 font-semibold transition-colors",
         variant === "solid"
-          ? "bg-ink text-paper hover:bg-sign"
-          : "border border-ink text-ink hover:bg-ink hover:text-paper",
+          ? "rounded-button bg-primary text-primary-ink hover:opacity-90"
+          : "rounded-button border border-primary text-ink hover:bg-primary hover:text-primary-ink",
       )}
     >
       {children}
@@ -204,7 +204,7 @@ export function CtaSection({
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Link
               to={to}
-              className="ui inline-flex bg-ink px-6 py-3.5 font-semibold text-paper transition-colors hover:bg-sign"
+              className="ui inline-flex px-6 py-3.5 font-semibold transition rounded-button bg-primary text-primary-ink hover:opacity-90"
             >
               {cta}
             </Link>

@@ -19,6 +19,31 @@ export interface NavItem {
   key: PageKey;
 }
 
+export type PaletteKey =
+  | "background"
+  | "surface"
+  | "text"
+  | "mutedText"
+  | "lines"
+  | "button"
+  | "buttonText"
+  | "ventures"
+  | "writing"
+  | "contact"
+  | "footer"
+  | "footerText";
+
+/** Design settings from the admin's Appearance screen. */
+export interface Theme {
+  light: Record<PaletteKey, string>;
+  dark: Record<PaletteKey, string>;
+  darkMode: "auto" | "off";
+  headingFont: string;
+  serifFont: string;
+  buttonShape: "sharp" | "soft" | "pill";
+  showGrid: boolean;
+}
+
 export interface Site {
   fullName: string;
   shortName: string;
@@ -34,6 +59,11 @@ export interface Site {
   defaultOgImage: string | null;
   siteUrl: string;
   verification: { google: string | null; bing: string | null };
+  theme: Theme;
+  logo: string | null;
+  favicon: string | null;
+  footerNote: string | null;
+  customCss: string | null;
   nav: NavItem[];
 }
 
@@ -43,17 +73,22 @@ export interface Cta {
   ctaLabel: string;
 }
 
+export type HomeSectionKey = "focus" | "writing" | "venture" | "cta";
+
 export interface HomeContent extends Cta {
-  heroKeywords: string[];
+  heroImage?: string | null;
+  heroKeywords?: string[] | null;
   heroHandle?: string | null;
-  heroGreeting: string;
-  heroIntro: string;
-  heroQuestion: string;
-  heroMonogram: string;
-  heroSignature: string;
+  heroGreeting?: string | null;
+  heroIntro?: string | null;
+  heroQuestion?: string | null;
+  heroMonogram?: string | null;
+  heroSignature?: string | null;
   heroSignatureNote?: string | null;
-  primaryCtaLabel: string;
-  secondaryCtaLabel: string;
+  primaryCtaLabel?: string | null;
+  secondaryCtaLabel?: string | null;
+  /** Sections below the hero, in order; editors can hide them. */
+  sections?: { key: HomeSectionKey; visible: boolean }[] | null;
   focusHeading: string;
   focusItems: {
     title: string;

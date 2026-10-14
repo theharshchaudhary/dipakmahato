@@ -1,14 +1,20 @@
 import { ButtonLink, Container, PersonChip } from "@/components/common";
+import { initials } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { HomeContent, Site } from "@/types";
 
 /**
  * Editorial hero. It reads as one sentence across the layout:
- * "Hello, I'm <name>, <intro> … <question>", with the portrait framed in the
- * middle over a fine drafting grid. Every word comes from the admin.
+ * "Hello, I'm <name>, <intro> … <question>", with a photo framed in the
+ * middle over a fine drafting grid. Every word comes from the admin, and any
+ * part left empty there is simply not shown.
  */
 export function Hero({ site, content: c }: { site: Site; content: HomeContent }) {
   const role = [site.jobTitle, site.organization?.name].filter(Boolean).join(", ");
+  const keywords = (c.heroKeywords ?? []).slice(0, 3);
+  const monogram = c.heroMonogram || initials(site.fullName);
+  const image = c.heroImage || site.portrait;
+  const hasRight = Boolean(c.heroQuestion || c.heroSignature);
 
   return (
     <section className="relative overflow-hidden border-b border-line">
@@ -16,18 +22,25 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
       <div aria-hidden className="hero-grid absolute inset-x-0 bottom-0 top-[58%] opacity-80" />
 
       <Container className="relative">
-        {c.heroKeywords.length > 0 && (
+        {keywords.length > 0 && (
           <ul
             aria-label="Focus"
             className="ui flex justify-between gap-4 pt-8 text-sm uppercase tracking-[0.12em] text-ink sm:text-base"
           >
-            {c.heroKeywords.slice(0, 3).map((word) => (
+            {keywords.map((word) => (
               <li key={word}>{word}</li>
             ))}
           </ul>
         )}
 
-        <div className="grid gap-10 pt-10 lg:min-h-[38rem] lg:grid-cols-[1fr_minmax(0,25rem)_1fr] lg:gap-8 lg:pt-6">
+        <div
+          className={cn(
+            "grid gap-10 pt-10 lg:min-h-[38rem] lg:gap-8 lg:pt-6",
+            hasRight
+              ? "lg:grid-cols-[1fr_minmax(0,25rem)_1fr]"
+              : "lg:grid-cols-[1.4fr_minmax(0,25rem)]",
+          )}
+        >
           {/* Left: who, then the first half of the sentence. */}
           <div className="flex flex-col justify-center lg:pb-40">
             <PersonChip name={site.fullName} portrait={site.portrait}>
@@ -35,77 +48,80 @@ export function Hero({ site, content: c }: { site: Site; content: HomeContent })
             </PersonChip>
             {/* The name is the h1 so the page plainly answers a search for it. */}
             <h1 className="mt-5 font-display text-[2.375rem] font-bold leading-[1.02] tracking-[-0.02em] sm:text-5xl lg:text-[2.75rem] xl:text-5xl">
-              {c.heroGreeting} {site.fullName},
+              {c.heroGreeting && `${c.heroGreeting} `}
+              {site.fullName}
+              {c.heroIntro && ","}
             </h1>
-            <p className="mt-5 max-w-sm font-display text-xl leading-snug text-ink">
-              {c.heroIntro}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink to="/ventures">{c.primaryCtaLabel}</ButtonLink>
-              <ButtonLink to="/about" variant="outline">
-                {c.secondaryCtaLabel}
-              </ButtonLink>
-            </div>
+            {c.heroIntro && (
+              <p className="mt-5 max-w-sm font-display text-xl leading-snug text-ink">
+                {c.heroIntro}
+              </p>
+            )}
+            {(c.primaryCtaLabel || c.secondaryCtaLabel) && (
+              <div className="mt-8 flex flex-wrap gap-3">
+                {c.primaryCtaLabel && <ButtonLink to="/ventures">{c.primaryCtaLabel}</ButtonLink>}
+                {c.secondaryCtaLabel && (
+                  <ButtonLink to="/about" variant="outline">
+                    {c.secondaryCtaLabel}
+                  </ButtonLink>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Centre: the portrait in a thin frame, standing on the grid. */}
+          {/* Centre: the photo in a thin frame, standing on the grid. */}
           <div className="relative mx-auto flex w-full max-w-sm items-end lg:max-w-none">
             <div aria-hidden className="absolute inset-x-0 bottom-0 top-6 border border-ink/30" />
-            <Portrait site={site} monogram={c.heroMonogram} />
+            {image ? (
+              <img
+                src={image}
+                alt={`Portrait of ${site.fullName}`}
+                width={800}
+                height={1000}
+                fetchPriority="high"
+                className="relative z-10 mx-auto max-h-[36rem] w-[88%] object-contain object-bottom"
+              />
+            ) : (
+              // No photo uploaded yet: keep the composition with a large monogram.
+              <div
+                aria-hidden
+                className="relative z-10 mx-6 mt-6 grid aspect-[4/5] w-full place-items-center bg-gradient-to-b from-surface to-surface/30"
+              >
+                <span className="monogram text-[9rem] text-ink/10">{monogram}</span>
+              </div>
+            )}
           </div>
 
           {/* Right: the question that finishes the sentence, and the signature. */}
-          <div className="flex flex-col justify-between gap-12 pb-10 lg:pb-12 lg:pt-28">
-            <p className="display-question max-w-[12ch]">{c.heroQuestion}</p>
-            <Signature site={site} content={c} />
-          </div>
+          {hasRight && (
+            <div className="flex flex-col justify-between gap-12 pb-10 lg:pb-12 lg:pt-28">
+              {c.heroQuestion ? (
+                <p className="display-question max-w-[12ch]">{c.heroQuestion}</p>
+              ) : (
+                <span />
+              )}
+              {c.heroSignature && (
+                <div className="flex items-end gap-3 self-start lg:self-end">
+                  <span aria-hidden className="monogram text-5xl text-ink">
+                    {monogram}
+                  </span>
+                  <p className="ui text-xs font-semibold uppercase leading-tight tracking-[0.08em]">
+                    <span className="block">
+                      {c.heroSignature}
+                      <span className="font-normal text-ink-soft before:mx-1.5 before:content-['|']">
+                        {site.jobTitle}
+                      </span>
+                    </span>
+                    {c.heroSignatureNote && (
+                      <span className="block font-normal text-ink-soft">{c.heroSignatureNote}</span>
+                    )}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </Container>
     </section>
-  );
-}
-
-function Portrait({ site, monogram }: { site: Site; monogram: string }) {
-  if (site.portrait) {
-    return (
-      <img
-        src={site.portrait}
-        alt={`Portrait of ${site.fullName}`}
-        width={800}
-        height={1000}
-        fetchPriority="high"
-        className="relative z-10 mx-auto max-h-[36rem] w-[88%] object-contain object-bottom"
-      />
-    );
-  }
-  // No portrait uploaded yet: keep the composition with a large monogram.
-  return (
-    <div
-      aria-hidden
-      className="relative z-10 mx-6 mt-6 grid aspect-[4/5] w-full place-items-center bg-gradient-to-b from-surface to-surface/30"
-    >
-      <span className="monogram text-[9rem] text-ink/10">{monogram}</span>
-    </div>
-  );
-}
-
-function Signature({ site, content: c }: { site: Site; content: HomeContent }) {
-  return (
-    <div className="flex items-end gap-3 self-start lg:self-end">
-      <span aria-hidden className="monogram text-5xl text-ink">
-        {c.heroMonogram}
-      </span>
-      <p className="ui text-xs font-semibold uppercase leading-tight tracking-[0.08em]">
-        <span className="block">
-          {c.heroSignature}
-          <span className={cn("font-normal text-ink-soft", "before:mx-1.5 before:content-['|']")}>
-            {site.jobTitle}
-          </span>
-        </span>
-        {c.heroSignatureNote && (
-          <span className="block font-normal text-ink-soft">{c.heroSignatureNote}</span>
-        )}
-      </p>
-    </div>
   );
 }

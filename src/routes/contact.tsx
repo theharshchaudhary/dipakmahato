@@ -188,7 +188,7 @@ function Contact() {
             <button
               type="submit"
               disabled={status.kind === "sending"}
-              className="ui bg-ink px-6 py-3.5 font-semibold text-paper transition-colors hover:bg-sign disabled:opacity-60"
+              className="ui px-6 py-3.5 font-semibold transition rounded-button bg-primary text-primary-ink hover:opacity-90 disabled:opacity-60"
             >
               {status.kind === "sending" ? "Sending…" : "Send message"}
             </button>

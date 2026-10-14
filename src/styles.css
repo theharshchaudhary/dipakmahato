@@ -1,10 +1,23 @@
+/* Every font the admin's Appearance screen can choose. Browsers only download the ones in use. */
 @import "@fontsource-variable/anek-latin/standard.css";
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource-variable/space-grotesk/index.css";
+@import "@fontsource-variable/manrope/index.css";
 @import "@fontsource-variable/newsreader/opsz.css";
 @import "@fontsource-variable/newsreader/opsz-italic.css";
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource-variable/playfair-display/index.css";
+@import "@fontsource-variable/lora/index.css";
+@import "@fontsource/instrument-serif/index.css";
 @import "tailwindcss" source(none);
 @source "../src";
 
 /*
+ * Default design tokens. The admin's Appearance screen overrides any of them
+ * with an inline <style> (see src/lib/theme.ts), so these only apply until
+ * something is changed there.
+ *
  * Palette: cool plaster background, ink text, and three accents that each
  * belong to one part of the site — blue = ventures, red = writing,
  * marigold = contact — so colour always tells you where you are.
@@ -15,28 +28,31 @@
   --ink: #141a33;
   --ink-soft: #4e5672;
   --line: #d6d9e3;
+  --primary: #141a33;
+  --primary-ink: #f3f4f8;
   --sign: #1d3a8f;
-  --sign-ink: #f3f4f8;
-  /* Blue for text on the page background (lighter in dark mode for contrast). */
   --sign-text: #1d3a8f;
   --crimson: #c8102e;
   --marigold: #f2a900;
   --marigold-ink: #141a33;
-  /* Fixed dark surface (footer) that stays dark in both themes. */
   --night: #000000;
   --night-ink: #f3f4f8;
+  --heading-font: "Anek Latin Variable";
+  --serif-font: "Newsreader Variable";
+  --button-radius: 0px;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --paper: #0e1224;
-    --night: #000000;
     --surface: #161b33;
     --ink: #e8eaf2;
     --ink-soft: #9ba2bc;
     --line: #2a3150;
-    --sign: #213f9a;
+    --primary: #e8eaf2;
+    --primary-ink: #0e1224;
+    --sign: #8fa8f2;
     --sign-text: #8fa8f2;
     --crimson: #f0506a;
     color-scheme: dark;
@@ -44,16 +60,18 @@
 }
 
 @theme inline {
-  --font-display: "Anek Latin Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Newsreader Variable", Georgia, "Times New Roman", serif;
+  --font-display: var(--heading-font), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--serif-font), Georgia, "Times New Roman", serif;
+  --radius-button: var(--button-radius);
 
   --color-paper: var(--paper);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
   --color-sign: var(--sign);
-  --color-sign-ink: var(--sign-ink);
   --color-sign-text: var(--sign-text);
   --color-crimson: var(--crimson);
   --color-marigold: var(--marigold);

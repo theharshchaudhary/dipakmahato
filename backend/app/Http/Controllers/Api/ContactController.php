@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use App\Models\SiteSetting;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +38,8 @@ class ContactController extends Controller
         ]);
 
         try {
-            $to = SiteSetting::current()->email;
+            // The public email if there is one, otherwise every admin user.
+            $to = SiteSetting::current()->email ?: User::query()->pluck('email')->all();
             Mail::raw(
                 "From: {$message->name} <{$message->email}>\n\n{$message->message}",
                 fn ($mail) => $mail->to($to)->replyTo($message->email, $message->name)

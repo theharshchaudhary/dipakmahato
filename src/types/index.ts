@@ -53,7 +53,7 @@ export interface Site {
   organization: { name: string; url: string | null } | null;
   positioning: string;
   location: string | null;
-  email: string;
+  email: string | null;
   linkedin: string | null;
   sameAs: string[];
   portrait: string | null;

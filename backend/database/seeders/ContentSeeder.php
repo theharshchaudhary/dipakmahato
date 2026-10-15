@@ -51,7 +51,7 @@ class ContentSeeder extends Seeder
             'organization_url' => 'https://zedfo.com',
             'positioning' => 'CEO & co-founder of Zedfo, building a fair, all-in-one delivery platform for the Kathmandu Valley.',
             'location' => 'Kathmandu, Nepal',
-            'email' => 'dipakkumarmahato553@gmail.com',
+            'email' => null,
             'linkedin_url' => null,
             'same_as' => [
                 'https://www.facebook.com/dipak.kumar.mahato.818628',
@@ -87,7 +87,7 @@ class ContentSeeder extends Seeder
                 'nav_label' => 'About',
                 'nav_order' => 1,
                 'meta_title' => 'About Dipak Kumar Mahato',
-                'meta_description' => 'Dipak Kumar Mahato is a Kathmandu-based entrepreneur, CEO and co-founder of Zedfo — building fair, transparent delivery for Nepal.',
+                'meta_description' => 'Dipak Kumar Mahato works at the intersection of technology, product thinking and marketing at Zedfo, shaping how people discover and experience it.',
                 'content' => self::aboutContent(),
             ],
             'writing' => [
@@ -123,9 +123,9 @@ class ContentSeeder extends Seeder
                 'meta_description' => 'Get in touch with Dipak Kumar Mahato, CEO of Zedfo, about restaurant and business partnerships, media, podcasts and collaboration.',
                 'content' => [
                     'heading' => "Let's talk.",
-                    'lead' => 'Write to me directly, or send a message with the form.',
+                    'lead' => 'Send a message with the form below, or find me on social media.',
                     'inquiries' => [
-                        ['title' => 'Restaurant and business partners', 'body' => 'Bring your restaurant or store onto Zedfo, or explore food packages, B2B supply and dine-out partnerships.'],
+                        ['title' => 'Restaurant and business partners', 'body' => 'Bring your restaurant or store onto Zedfo, or explore food packages and dine-out partnerships.'],
                         ['title' => 'Media and podcasts', 'body' => 'Interviews, panels and conversations about startups, delivery and fair pricing in Nepal.'],
                         ['title' => 'Collaboration', 'body' => 'Creators, communities and builders who want a fairer local economy.'],
                     ],
@@ -164,19 +164,18 @@ class ContentSeeder extends Seeder
         ];
     }
 
+    /** Dipak's own words. */
     public static function aboutContent(): array
     {
         return [
-            'lead' => "I'm building Zedfo in Kathmandu because I believe Nepal deserves platforms that are fair to the people who use them: honest prices for customers, workable terms for local businesses.",
+            'lead' => 'Coming from a tech background, I’ve always been interested in how technology can solve real problems.',
             'note' => null,
             'sections' => [
-                ['title' => 'How I got here', 'body' => "Before Zedfo, my work was in operations and administration — the unglamorous side of business where you see exactly where money and time leak away. I'm also completing a Master of Business Studies at Nepal Commerce Campus. Both pointed me to the same conclusion: the most useful thing I could do was build something here, for here."],
-                ['title' => 'Why Zedfo', 'body' => "Ordering food online in Nepal often costs more than walking into the same restaurant. Zedfo starts from the opposite idea: food at the restaurant's own menu price, delivery charges shown plainly, nothing hidden. I call it a fair delivery movement rather than just another app."],
-                ['title' => 'How I lead', 'body' => "Be transparent with customers, partners and the team. Make the economics work for restaurants and riders, not only for the platform. Ship, listen, and fix what doesn't work."],
-                ['title' => 'Right now', 'body' => 'Growing food delivery across the Kathmandu Valley, bringing more restaurants and stores onto Zedfo, and expanding the app into essentials, grocery and medicine.'],
+                ['title' => 'At Zedfo', 'body' => 'At Zedfo, I get to explore that beyond code, working at the intersection of technology, product thinking, and marketing. I contribute to shaping how people discover, understand, and experience Zedfo through creative campaigns, digital content, and brand communication.'],
+                ['title' => 'Why Zedfo', 'body' => 'For me, Zedfo is an opportunity to be part of building something practical for Nepal, combining a technology-driven mindset with the creativity and strategy needed to make a product reach people.'],
             ],
-            'interestsHeading' => 'What I think about',
-            'interests' => ['Fair pricing', 'Hyper-local delivery', 'Local commerce', 'Operations', 'Startups in Nepal'],
+            'interestsHeading' => 'What I work on',
+            'interests' => ['Technology', 'Product thinking', 'Marketing', 'Creative campaigns', 'Digital content', 'Brand communication'],
             'ctaTitle' => "Let's start a conversation.",
             'ctaBody' => "Partnerships, media, or an exchange of ideas — I'd be glad to hear from you.",
             'ctaLabel' => 'Get in touch',
@@ -191,7 +190,7 @@ class ContentSeeder extends Seeder
             'role' => 'CEO & Co-founder',
             'description' => "Zedfo is an all-in-one delivery app built in Nepal, starting with food delivery across the Kathmandu Valley. Customers can also order daily essentials, grocery, medicine and fashion from the same app, with home services coming soon.",
             'problem' => "Food ordered through delivery apps often costs more than the same dish at the restaurant, and the real total only appears at checkout. Customers pay more than they expect, and trust in ordering online wears thin.",
-            'product' => "Zedfo delivers food at the same menu price set by the restaurant — no inflated menu prices, no hidden charges. For partners there are restaurant delivery, food packages, B2B supply and dine-out programs, with store tools for inventory, payments and an earnings dashboard. Riders get route optimisation, real-time tracking and their own earnings dashboard.",
+            'product' => "Zedfo delivers food at the same menu price set by the restaurant — no inflated menu prices, no hidden charges. For partners there are restaurant delivery, food packages and dine-out programs, with store tools for inventory, payments and an earnings dashboard. Riders get route optimisation, real-time tracking and their own earnings dashboard.",
             'milestones' => [
                 'Launched food delivery across the Kathmandu Valley',
                 'Available on the App Store and Google Play',
@@ -256,7 +255,7 @@ class ContentSeeder extends Seeder
                     <h2>Tools, not just traffic</h2>
                     <p>Restaurants and stores on Zedfo get tools to manage inventory, take payments and withdraw earnings, with a dashboard that shows what they have earned. The point is to help a business run better, not only to send it more orders.</p>
                     <h2>More than one way to work together</h2>
-                    <p>Not every business needs the same thing. Alongside restaurant delivery, Zedfo offers food packages, B2B supply and dine-out partnerships, so a partner can choose what fits.</p>
+                    <p>Not every business needs the same thing. Alongside restaurant delivery, Zedfo offers food packages and dine-out partnerships, so a partner can choose what fits.</p>
                     <h2>Trust is the product</h2>
                     <p>When customers see the restaurant's real menu price, they trust the restaurant more. That trust is worth more than any short-term markup — for the restaurant, and for us.</p>
                     HTML,

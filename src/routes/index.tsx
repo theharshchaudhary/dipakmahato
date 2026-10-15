@@ -137,9 +137,11 @@ function Home() {
     ),
     cta: (
       <CtaSection title={c.ctaTitle} body={c.ctaBody} cta={c.ctaLabel}>
-        <a href={`mailto:${site.email}`} className="ui link font-medium">
-          {site.email}
-        </a>
+        {site.email && (
+          <a href={`mailto:${site.email}`} className="ui link font-medium">
+            {site.email}
+          </a>
+        )}
         {site.sameAs.map((url) => (
           <a
             key={url}

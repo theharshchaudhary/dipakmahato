@@ -31,11 +31,13 @@ export function Footer() {
           <div className="md:col-span-3">
             <p className="label text-night-ink/50">Contact</p>
             <ul className="mt-5 space-y-2.5">
-              <li>
-                <a href={`mailto:${site.email}`} className={footerLink}>
-                  {site.email}
-                </a>
-              </li>
+              {site.email && (
+                <li>
+                  <a href={`mailto:${site.email}`} className={footerLink}>
+                    {site.email}
+                  </a>
+                </li>
+              )}
               {site.sameAs.map((url) => (
                 <li key={url}>
                   {/* rel="me" tells search engines these profiles belong to the site owner. */}

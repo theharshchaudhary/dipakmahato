@@ -70,8 +70,10 @@ class ManageSiteSettings extends Page
                 Section::make('Contact and profiles')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('email')->email()->required()
-                            ->helperText('Shown publicly, and where contact-form notifications are sent.'),
+                        TextInput::make('email')
+                            ->label('Public email')
+                            ->email()
+                            ->helperText('Optional. Shown on the site and receives contact-form notifications. Empty: no email is shown, and notifications go to the admin users.'),
                         TextInput::make('linkedin_url')->label('LinkedIn URL')->url()->maxLength(255),
                         TagsInput::make('same_as')
                             ->label('Other official profiles')

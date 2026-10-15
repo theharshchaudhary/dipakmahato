@@ -82,7 +82,9 @@ function Contact() {
     } catch {
       setStatus({
         kind: "failed",
-        message: `The message couldn't be sent. Try again, or email ${site.email}.`,
+        message: site.email
+          ? `The message couldn't be sent. Try again, or email ${site.email}.`
+          : "The message couldn't be sent. Try again in a moment.",
       });
     }
   };
@@ -125,11 +127,13 @@ function Contact() {
     <>
       <PageHeader label="Contact" tone="marigold" title={c.heading} lead={c.lead}>
         <ul className="mt-10 flex flex-wrap gap-2">
-          <li>
-            <a href={`mailto:${site.email}`} className="hover:[&>span]:ring-ink">
-              <Pill>{site.email}</Pill>
-            </a>
-          </li>
+          {site.email && (
+            <li>
+              <a href={`mailto:${site.email}`} className="hover:[&>span]:ring-ink">
+                <Pill>{site.email}</Pill>
+              </a>
+            </li>
+          )}
           {site.sameAs.map((url) => (
             <li key={url}>
               <a

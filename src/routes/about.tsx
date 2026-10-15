@@ -52,7 +52,8 @@ function About() {
 
   return (
     <>
-      <PageHeader label="About" title={site.fullName} lead={c.lead}>
+      {/* The introduction can be long, so it sits in the body beside the photo, not in the header. */}
+      <PageHeader label="About" title={site.fullName}>
         {c.note && <DraftNote>{c.note}</DraftNote>}
       </PageHeader>
 
@@ -87,6 +88,11 @@ function About() {
         </aside>
 
         <div className="lg:col-span-7 lg:col-start-6">
+          {c.lead && (
+            <p className="mb-14 whitespace-pre-line font-serif text-xl leading-relaxed text-ink sm:text-[1.375rem]">
+              {c.lead}
+            </p>
+          )}
           <dl>
             {c.sections.map((s) => (
               <div key={s.title} className="reveal border-t border-ink/15 pb-10 pt-5">

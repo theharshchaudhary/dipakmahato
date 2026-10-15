@@ -168,12 +168,9 @@ class ContentSeeder extends Seeder
     public static function aboutContent(): array
     {
         return [
-            'lead' => 'Coming from a tech background, I’ve always been interested in how technology can solve real problems.',
+            'lead' => 'Coming from a tech background, I’ve always been interested in how technology can solve real problems. At Zedfo, I get to explore that beyond code, working at the intersection of technology, product thinking, and marketing. I contribute to shaping how people discover, understand, and experience Zedfo through creative campaigns, digital content, and brand communication. For me, Zedfo is an opportunity to be part of building something practical for Nepal, combining a technology-driven mindset with the creativity and strategy needed to make a product reach people.',
             'note' => null,
-            'sections' => [
-                ['title' => 'At Zedfo', 'body' => 'At Zedfo, I get to explore that beyond code, working at the intersection of technology, product thinking, and marketing. I contribute to shaping how people discover, understand, and experience Zedfo through creative campaigns, digital content, and brand communication.'],
-                ['title' => 'Why Zedfo', 'body' => 'For me, Zedfo is an opportunity to be part of building something practical for Nepal, combining a technology-driven mindset with the creativity and strategy needed to make a product reach people.'],
-            ],
+            'sections' => [],
             'interestsHeading' => 'What I work on',
             'interests' => ['Technology', 'Product thinking', 'Marketing', 'Creative campaigns', 'Digital content', 'Brand communication'],
             'ctaTitle' => "Let's start a conversation.",

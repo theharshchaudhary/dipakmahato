@@ -61,7 +61,7 @@ cd backend && php artisan test                    # API + every admin screen
 
 ## Deploying (ceo.zedfo.app)
 
-Pushing to `redesign` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
+Pushing to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
 
 1. **Test** — frontend typecheck, lint and tests; backend test suite.
 2. **Build** — the SSR site (`.output/`) and the backend with production dependencies.

@@ -2,7 +2,7 @@ name: Test and deploy ceo.zedfo.app
 
 on:
   push:
-    branches: [redesign]
+    branches: [main]
   workflow_dispatch:
 
 # Never run two deploys at once; a newer push waits for the current one.

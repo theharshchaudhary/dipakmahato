@@ -93,12 +93,11 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      ...(site?.favicon
-        ? [{ rel: "icon", href: site.favicon }]
-        : [
-            { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-            { rel: "icon", href: "/favicon.ico", sizes: "any" },
-          ]),
+      // /favicon.svg serves the uploaded icon or a generated monogram (src/lib/favicon.ts).
+      site?.favicon
+        ? { rel: "icon", href: site.favicon }
+        : { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: site?.favicon ?? "/favicon.svg" },
       { rel: "sitemap", type: "application/xml", href: "/sitemap.xml" },
     ],
     // Colours, fonts and custom CSS from the admin's Appearance screen, after the stylesheet.

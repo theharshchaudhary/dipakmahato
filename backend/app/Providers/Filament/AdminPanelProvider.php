@@ -45,7 +45,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(fn () => (self::settings()?->short_name ?? 'Site').' — admin')
             ->brandLogo(fn () => Media::url(self::settings()?->logo_path))
             ->brandLogoHeight('2rem')
-            ->favicon(fn () => Media::url(self::settings()?->favicon_path) ?? asset('favicon.svg'))
+            // Same icon as the public site: the uploaded one, or the generated monogram.
+            ->favicon(fn () => Media::url(self::settings()?->favicon_path)
+                ?? rtrim(self::settings()?->site_url ?? '', '/').'/favicon.svg')
             // A fixed palette keeps admin buttons readable whatever colours the site uses.
             ->colors([
                 'primary' => Color::Blue,

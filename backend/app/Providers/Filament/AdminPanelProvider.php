@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Dashboard;
 use App\Models\SiteSetting;
 use App\Support\Media;
 use Filament\Actions\Action;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -32,7 +34,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->profile()
+            ->profile(EditProfile::class, isSimple: false)
+            ->multiFactorAuthentication([
+                AppAuthentication::make()->recoverable(),
+            ])
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('7xl')

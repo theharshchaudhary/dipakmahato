@@ -59,19 +59,35 @@ npm run typecheck && npm run lint && npm test     # frontend
 cd backend && php artisan test                    # API + every admin screen
 ```
 
-## Deploying
+## Deploying (ceo.zedfo.app)
 
-Two apps, one database:
+Pushing to `redesign` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
 
-1. **Backend** (any PHP host, e.g. `admin.example.com`): upload `backend/`, point the web root at
-   `backend/public`, use MySQL in `.env` (`DB_CONNECTION=mysql` …), set `APP_ENV=production`,
-   `APP_DEBUG=false`, `APP_URL`, `FRONTEND_URL`, mail settings, then run
-   `php artisan migrate --force --seed`, `php artisan storage:link`, `php artisan optimize`.
-2. **Frontend** (any Node host, e.g. `example.com`): `npm ci && npm run build`, then run
-   `API_URL=https://admin.example.com/api node .output/server/index.mjs`. For other platforms set
-   Nitro's preset at build time, e.g. `NITRO_PRESET=vercel npm run build`.
-3. In the admin, set **Site settings → Public site URL** to the live address. Canonical links,
-   the sitemap and structured data all use it.
+1. **Test** — frontend typecheck, lint and tests; backend test suite.
+2. **Build** — the SSR site (`.output/`) and the backend with production dependencies.
+3. **Release** — the bundle is copied to the server, unpacked into
+   `/var/www/ceo.zedfo.app/releases/<commit>`, and [deploy/activate.sh](deploy/activate.sh)
+   links shared state, runs migrations, switches `current`, and restarts the site.
+   The last 5 releases are kept.
+
+Server layout (Ubuntu, nginx, PHP 8.2-FPM, Node 20):
+
+| Piece | Where | Config in repo |
+| --- | --- | --- |
+| nginx site | `/etc/nginx/sites-available/ceo.zedfo.app` | [deploy/nginx](deploy/nginx/ceo.zedfo.app.conf) |
+| PHP-FPM pool (user `ceozedfo`) | `/etc/php/8.2/fpm/pool.d/ceozedfo.conf` | [deploy/php-fpm](deploy/php-fpm/ceozedfo.conf) |
+| Site service (Node, port 3210) | `ceo-zedfo-web.service` | [deploy/systemd](deploy/systemd/ceo-zedfo-web.service) |
+| Settings, uploads, database | `/var/www/ceo.zedfo.app/shared/` | — (never deployed over) |
+
+`/admin`, `/livewire`, `/api` and `/storage` go to Laravel; everything else to the Node site,
+which reads content from Laravel on `127.0.0.1:8090`. GitHub Actions connects as `ceozedfo`
+with a deploy key (secrets `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`, `DEPLOY_HOST`,
+`DEPLOY_USER`); that user may only restart its own service.
+
+**Rollback:** point `current` at an earlier release and restart:
+`ln -sfn /var/www/ceo.zedfo.app/releases/<commit> /var/www/ceo.zedfo.app/current && sudo systemctl restart ceo-zedfo-web`.
+
+**HTTPS:** once DNS points `ceo.zedfo.app` at the server, run `certbot --nginx -d ceo.zedfo.app` as root.
 
 ## Getting found on Google
 

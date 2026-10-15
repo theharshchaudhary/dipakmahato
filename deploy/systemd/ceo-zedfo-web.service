@@ -1,0 +1,21 @@
+# Public site (TanStack Start SSR) for ceo.zedfo.app.
+# Installed as /etc/systemd/system/ceo-zedfo-web.service
+[Unit]
+Description=ceo.zedfo.app public site (Node SSR)
+After=network.target nginx.service
+
+[Service]
+Type=simple
+User=ceozedfo
+Group=www-data
+WorkingDirectory=/var/www/ceo.zedfo.app/current
+ExecStart=/usr/bin/node /var/www/ceo.zedfo.app/current/.output/server/index.mjs
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3210
+Environment=API_URL=http://127.0.0.1:8090/api
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

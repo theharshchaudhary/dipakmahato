@@ -1,0 +1,112 @@
+name: Test and deploy ceo.zedfo.app
+
+on:
+  push:
+    branches: [redesign]
+  workflow_dispatch:
+
+# Never run two deploys at once; a newer push waits for the current one.
+concurrency:
+  group: deploy-ceo-zedfo-app
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npx -y npm@11 ci
+
+      - name: Check frontend
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: intl, pdo_sqlite, sqlite3, mbstring, bcmath, zip, gd
+          coverage: none
+
+      - name: Test backend
+        working-directory: backend
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build site
+        run: |
+          npx -y npm@11 ci
+          npm run build
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: intl, pdo_sqlite, sqlite3, mbstring, bcmath, zip, gd
+          coverage: none
+
+      - name: Install backend for production
+        working-directory: backend
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress
+
+      - name: Package release
+        run: |
+          tar -czf release.tgz \
+            --exclude='backend/tests' \
+            --exclude='backend/storage' \
+            --exclude='backend/node_modules' \
+            --exclude='backend/.env' \
+            --exclude='backend/database/*.sqlite' \
+            --exclude='backend/public/storage' \
+            .output backend deploy/activate.sh
+
+      - name: Configure SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Upload and activate
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          RELEASE: ${{ github.sha }}
+        run: |
+          SSH="ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes"
+          scp -i ~/.ssh/deploy_key -o IdentitiesOnly=yes release.tgz "$TARGET:/tmp/ceo-zedfo-$RELEASE.tgz"
+          $SSH "$TARGET" "set -e
+            mkdir -p /var/www/ceo.zedfo.app/releases/$RELEASE
+            tar -xzf /tmp/ceo-zedfo-$RELEASE.tgz -C /var/www/ceo.zedfo.app/releases/$RELEASE
+            rm /tmp/ceo-zedfo-$RELEASE.tgz
+            bash /var/www/ceo.zedfo.app/releases/$RELEASE/deploy/activate.sh $RELEASE"
+
+      - name: Check the live site
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes "$TARGET" '
+            sleep 3
+            curl -fsS -o /dev/null -w "site %{http_code}\n" -H "Host: ceo.zedfo.app" http://127.0.0.1/
+            curl -fsS -o /dev/null -w "api %{http_code}\n" http://127.0.0.1:8090/api/site'

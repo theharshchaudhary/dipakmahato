@@ -40,7 +40,6 @@ class SiteResource extends JsonResource
             'customCss' => $this->custom_css,
             'nav' => Page::query()
                 ->where('show_in_nav', true)
-                ->where('key', '!=', 'home')
                 ->orderBy('nav_order')
                 ->get()
                 ->map(fn (Page $page) => [

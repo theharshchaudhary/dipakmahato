@@ -33,8 +33,9 @@ class ContentApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('fullName', 'Dipak Kumar Mahato')
             ->assertJsonPath('alternateNames', ['Dipak Mahato', 'Dipak K. Mahato'])
-            ->assertJsonCount(4, 'nav')
-            ->assertJsonPath('nav.0.path', '/about');
+            ->assertJsonCount(5, 'nav')
+            ->assertJsonPath('nav.0.path', '/')
+            ->assertJsonPath('nav.1.path', '/about');
     }
 
     public function test_every_fixed_page_is_served_and_unknown_keys_404(): void

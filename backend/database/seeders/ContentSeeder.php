@@ -77,7 +77,7 @@ class ContentSeeder extends Seeder
         return [
             'home' => [
                 'nav_label' => 'Home',
-                'show_in_nav' => false,
+                'show_in_nav' => true,
                 'nav_order' => 0,
                 'meta_title' => 'Dipak Kumar Mahato — CEO & Co-founder of Zedfo',
                 'meta_description' => 'Dipak Kumar Mahato (Dipak Mahato) is the CEO and co-founder of Zedfo, the all-in-one delivery app for the Kathmandu Valley, with restaurant menu prices.',

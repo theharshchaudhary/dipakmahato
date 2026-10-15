@@ -47,6 +47,7 @@ export function Header() {
               <li key={item.key}>
                 <Link
                   to={item.path}
+                  activeOptions={{ exact: item.path === "/" }}
                   className="ui group relative flex items-center gap-2 px-3 py-2 text-ink-soft transition-colors hover:text-ink"
                   activeProps={{ className: "!text-ink font-semibold", "aria-current": "page" }}
                 >
@@ -100,6 +101,7 @@ export function Header() {
               <li key={item.key}>
                 <Link
                   to={item.path}
+                  activeOptions={{ exact: item.path === "/" }}
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-4 border-b border-line py-4 font-display text-3xl font-semibold"
                 >
